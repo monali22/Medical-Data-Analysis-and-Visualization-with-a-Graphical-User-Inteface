@@ -58,13 +58,13 @@
                                             <content>
                                                <GridPane fx:id="gpForANC" gridLinesVisible="true">
                                                  <columnConstraints>
-                                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
+                                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
                                                  </columnConstraints>
                                                  <rowConstraints>
-                                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                   <RowConstraints minHeight="20.0" prefHeight="5.0" vgrow="SOMETIMES" />
+                                                   <RowConstraints minHeight="20.0" prefHeight="5.0" vgrow="SOMETIMES" />
+                                                   <RowConstraints minHeight="20.0" prefHeight="5.0" vgrow="SOMETIMES" />
                                                  </rowConstraints>
                                                </GridPane>
                                             </content>
@@ -79,13 +79,13 @@
                                             <content>
                                                <GridPane fx:id="gpForANC2" gridLinesVisible="true">
                                                  <columnConstraints>
-                                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
+                                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
                                                  </columnConstraints>
                                                  <rowConstraints>
-                                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                   <RowConstraints minHeight="20.0" prefHeight="5.0" vgrow="SOMETIMES" />
+                                                   <RowConstraints minHeight="20.0" prefHeight="5.0" vgrow="SOMETIMES" />
+                                                   <RowConstraints minHeight="20.0" prefHeight="5.0" vgrow="SOMETIMES" />
                                                  </rowConstraints>
                                                </GridPane>
                                             </content>
@@ -100,13 +100,13 @@
                                             <content>
                                                <GridPane fx:id="gpForANC3" gridLinesVisible="true">
                                                  <columnConstraints>
-                                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
+                                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
                                                  </columnConstraints>
                                                  <rowConstraints>
-                                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                   <RowConstraints minHeight="20.0" prefHeight="5.0" vgrow="SOMETIMES" />
+                                                   <RowConstraints minHeight="20.0" prefHeight="5.0" vgrow="SOMETIMES" />
+                                                   <RowConstraints minHeight="20.0" prefHeight="5.0" vgrow="SOMETIMES" />
                                                  </rowConstraints>
                                                </GridPane>
                                             </content>
