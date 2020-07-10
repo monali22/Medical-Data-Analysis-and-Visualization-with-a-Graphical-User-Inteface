@@ -27,6 +27,10 @@ public class bead {
      this.analyte = new SimpleStringProperty(analyte);
  }
  
+ public String getAnalyteName(SimpleIntegerProperty regionNumber) {
+  return analyte.get();
+ }
+ 
  public int getRegionNumber() {
   return regionNumber.get();
  }

@@ -6,6 +6,7 @@
 package Controller;
 
 import Model.ModelForExperiments;
+import Model.PlateStatus;
 import Util.ErrorMsg;
 import java.io.IOException;
 import java.net.URL;
@@ -164,6 +165,14 @@ public class MenuBarController implements Initializable{
             error.showError("Please set up experiments first!");
             return;
         }
+        /*
+        if(false)
+        {
+             ErrorMsg error = new ErrorMsg();
+            error.showError("Please confirm all experiments first!");
+            return;
+        }
+                */
         try {
 
         URL paneTwoUrl = getClass().getResource("/View/MedianValue.fxml");

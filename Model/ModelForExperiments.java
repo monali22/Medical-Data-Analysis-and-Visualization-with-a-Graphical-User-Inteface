@@ -25,11 +25,13 @@ import Model.UserInputForBeadPlate;
  *
  * @author feiping
  */
+
+//TODO (if needed) : Get method of status 
 public class ModelForExperiments {
     
     //defalut probes to two types of experiment. put them in the model so that user can save the change for future experiments. 
     List<List<String>> ProbesForExperimentType1 = new ArrayList<>();
-    //List<List<String>> defaultProbesForExperimentType2 = new ArrayList<>();
+     List<List<String>> defaultProbesForExperimentType2 = new ArrayList<>();
     
     
     private ObservableList<bead> analytes = FXCollections.observableArrayList();
@@ -102,7 +104,8 @@ public class ModelForExperiments {
     public void initializeProbesForExperimentType1() throws FileNotFoundException
     {
             // pass the path to the file as a parameter
-        File file =new File("C:\\Users\\feiping\\Documents\\NetBeansProjects\\JavaFXApplication1\\src\\Controller\\probes1.txt");
+        String currentLocation = System.getProperty("user.dir").toString();
+        File file =new File( "/Users/kuldeep/Documents/CSS600/Medical-Data-Analysis-and-Visualization-with-a-Graphical-User-Inteface/Controller/probes1.txt"); //tODO: Change File location and name
         Scanner sc = new Scanner(file); 
         while (sc.hasNextLine())
         {
@@ -111,6 +114,26 @@ public class ModelForExperiments {
             ProbesForExperimentType1.add(probeList);
         }
         sc.close();
+    }
+    public void initializeProbesForPlate2() throws FileNotFoundException
+    {
+            // pass the path to the file as a parameter
+        String currentLocation = System.getProperty("user.dir").toString();
+        File file =new File( "/Users/kuldeep/Documents/CSS600/Medical-Data-Analysis-and-Visualization-with-a-Graphical-User-Inteface/Model/probes2.txt"); //tODO: Change File location and name
+        Scanner sc = new Scanner(file); 
+        while (sc.hasNextLine())
+        {
+            String str = sc.nextLine();
+            List<String> probeList = Arrays.asList(str.split(","));
+            defaultProbesForExperimentType2.add(probeList);
+        }
+        sc.close();
+    }
+    public List<List<String>>  getProbesForPlate2() throws FileNotFoundException
+    {
+        if(defaultProbesForExperimentType2.isEmpty())
+            initializeProbesForPlate2();
+        return defaultProbesForExperimentType2;
     }
     
     public List<List<String>>  getProbesForExperimentType1() throws FileNotFoundException
@@ -204,7 +227,10 @@ public class ModelForExperiments {
        //if not empty clear it first. (for manually set up experiments)
        if(!probesListForPopulate.isEmpty()) 
            probesListForPopulate.clear();
-       
+       if(XMLFileMap.isEmpty()){
+           
+           System.out.println("XML MAP IS EMPTY!!!!!!!!!!!!!!!!!!");
+       }
        for(int i = 1; i <=numberOfExpriments; i++ )
        {
             HashMap<Integer, ObservableList<probeTableData>> probesList = new HashMap<>();
@@ -583,6 +609,22 @@ public class ModelForExperiments {
         return ANCMatrix.get(experimentPos).get(plateIndex).get(sampleIndex).get(probeIndex);
     }
 
+    private HashMap<Integer,List<List<HashMap<Integer,Double>>>> getfoldChange = new HashMap<>();
+    public void setFoldChangeMatrixforANC(int pos, List<List<HashMap<Integer,Double>>>  ANCMatrix)
+    {
+        if(!getfoldChange.containsKey(pos)){
+            this.getfoldChange.put(pos, ANCMatrix);
+        }
+    }  
+    public HashMap<Integer,List<List<HashMap<Integer,Double>>>> getfoldChangeforANC()
+    {
+        return getfoldChange;
+    }
     
-    
+    public List<List<String>> getPlate1(){
+        return ProbesForExperimentType1;
+    }
+    public List<List<String>> getPlate2(){
+        return defaultProbesForExperimentType2;
+    }
 }
