@@ -85,7 +85,9 @@ public class FoldChangeController implements Initializable {
     String[] blue = {" -fx-background-color: rgb(235, 235, 250);"," -fx-background-color: rgb(214,214,245);",
      " -fx-background-color: rgb(173,173,245);"," -fx-background-color: rgb(112,112,219);"};
     
-
+    
+    private HashMap<Integer,List<List<HashMap<Integer,Double>>>> getfoldChange = new HashMap<>();
+    private ArrayList<HashMap<Integer,List<HashMap<Integer,Double>>>> foldChangeANC = new ArrayList();
     /**
      * Initializes the controller class.
      */
@@ -272,7 +274,7 @@ public class FoldChangeController implements Initializable {
        List<HashMap<Integer,Double>> mv1ForOnePlate = new ArrayList<>();
        List<HashMap<Integer,Double>>  mv2ForOnePlate  = new ArrayList<>();
        
-
+       
        
       List<List<HashMap<Integer,Double>>> foldChange = new ArrayList<>();
       plates = Math.min(ModelForExperiments.getInstance().getMedianValueMatrix().get(experimementPos1).size(), 
@@ -296,11 +298,34 @@ public class FoldChangeController implements Initializable {
                 }      
                 plate.add(probe);
            }
+           //ModelForExperiments.getInstance().setFoldChangeMatrixforANC(foldChangeANC);
            foldChange.add(plate);
+
        }
+       // Only store the requested fold change plates
+       //TODO: make this more flexible by asking users to input which combinations they want 
+       if(experimementPos1 == experimementPos2){
+               if(experimementPos1 == 1 && ((sampleIndex1 == 0 && sampleIndex2 ==2) || (sampleIndex1 == 2 && sampleIndex2 == 0))){
+                   ModelForExperiments.getInstance().setFoldChangeMatrixforANC(experimementPos1,foldChange); 
+                   //getfoldChange.put(experimementPos1, foldChange);
+               }else if(experimementPos1 == 2 && ((sampleIndex1 == 0 && sampleIndex2 ==2) || (sampleIndex1 == 2 && sampleIndex2 == 0)) ) {
+                   ModelForExperiments.getInstance().setFoldChangeMatrixforANC(experimementPos1,foldChange);
+               }else if(experimementPos1 == 3 && ((sampleIndex1 == 1 && sampleIndex2 ==3) || (sampleIndex1 == 3 && sampleIndex2 == 1))){
+                   ModelForExperiments.getInstance().setFoldChangeMatrixforANC(experimementPos1,foldChange);
+               }else if(experimementPos1 == 4 && ((sampleIndex1 == 1 && sampleIndex2 ==3) || (sampleIndex1 == 3 && sampleIndex2 == 1))){
+                   ModelForExperiments.getInstance().setFoldChangeMatrixforANC(experimementPos1,foldChange);
+               }
+       }
+       
        return foldChange;
     }
-   
+    /*
+    public List<List<HashMap<Integer,Double>>> getfoldChange(int experimementPos1, int sampleIndex1, int experimementPos2, int sampleIndex2)
+    {
+        //getfoldChange calculateFoldChange(experimementPos1,sampleIndex1,experimementPos2,sampleIndex2);
+        return getfoldChange;
+    }
+   */
     private int getSamllestProbes(int experimementPos1, int experimementPos2, int plates)
     {
          List<UserInputForBeadPlate> userInputs1 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos1);

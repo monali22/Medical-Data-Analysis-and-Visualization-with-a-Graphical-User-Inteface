@@ -325,6 +325,7 @@ public class MedianValueController implements Initializable {
     private  HashMap<Integer, Double>  calculateMedianValue(List<HashMap<Integer, Double>> wellsForCalculate) {
       
         HashMap<Integer, Double> finalMedianValueForOneProbe = new HashMap<>();
+        //int temp = 0;
         for(int i = 0; i < analytes.size();i++)
         {
             int regionNumber = analytes.get(i).getRegionNumber();       
@@ -332,7 +333,7 @@ public class MedianValueController implements Initializable {
             //System.out.println("curEepriment is " + curExperiment + ". cur curSample is "  + curSample + ". cur RegionNumber is " + regionNumber);
             for(HashMap<Integer, Double> map : wellsForCalculate)
             {
-
+                //System.out.println(wellsForCalculate);;
                 //double data = map.get(regionNumber);
                 sum += map.get(regionNumber);
             }
@@ -353,11 +354,12 @@ public class MedianValueController implements Initializable {
    // for(int i = files.size()-1 ; i >=0; i--) // the sequence should be backwards
     for(int i = 0 ; i < files.size(); i++) 
     {
-       absolutePath.add(directory + "\\" + files.get(i) );   
+       absolutePath.add(directory + "/" + files.get(i) );
      }
     
     for(int i = 0 ; i < absolutePath.size();i++) // 
     {
+        System.out.println(absolutePath.get(i));
         meidanValueData.add(parser.getMedianValueData(absolutePath.get(i), experimentPos, i));
     }
      return meidanValueData;    
@@ -424,9 +426,11 @@ public class MedianValueController implements Initializable {
     private int getLargestSampleCountForOneExperiment(int i ) {
         int res = 0;
         //initilizeMapOfSample(); 
-        for(Integer n : mapOfSamples.get(i))
-        {
-            res = Math.max(res, n);
+        if(!mapOfSamples.isEmpty()){
+            for(Integer n : mapOfSamples.get(i))
+            {
+                res = Math.max(res, n);
+            }
         }
          return res;       
     }
@@ -462,13 +466,22 @@ public class MedianValueController implements Initializable {
 
     private void calcaluateMedianValueMatrix() {
          if(!ModelForExperiments.getInstance().getMedianValueMatrix().isEmpty()) return;
-          
+         //CRASH wwhen experiments are not confirmed  
+         
         for(int i = 1; i <=experiments;i++)
         {
             List<HashMap<Integer, HashMap<Integer,  Double>>> medianValueOriginalData = getMeidanValueOriginalData(i);
-            
+            HashMap<Integer, List<UserInputForBeadPlate>> test = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap();
+           //TODO: i is not correctly checked ; Check ModelForExperiments
+            //First check status if availble (true or false) get or else result 
             HashMap<Integer, ObservableList<probeTableData>> probesListForCurExperiment = ModelForExperiments.getInstance().getProbeMapForPopulate().get(i); 
             List<UserInputForBeadPlate> inputs =  ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(i);
+  
+            if(inputs.isEmpty())
+            {
+                System.out.println("inputs is empty ");
+            }
+
             int numberOfPlates = inputs.size();
             //System.out.println("experiment is " + i ); // for debug
             for(int j = 0; j < numberOfPlates; j++)

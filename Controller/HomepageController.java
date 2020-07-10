@@ -69,9 +69,6 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-import static javax.swing.text.html.HTML.Tag.S;
-import static jdk.nashorn.internal.runtime.regexp.joni.constants.AsmConstants.S;
-import static jdk.nashorn.internal.runtime.regexp.joni.encoding.CharacterType.S;
 
 /**
  *
@@ -168,9 +165,9 @@ public class HomepageController implements Initializable {
     List<Tab> beadPlates = new ArrayList<>(); // list for bead plate tabs 
     List<TextField> layoutCellsList = new ArrayList<>(); // List to hold textfield in each gridpane cells. 
     //colors list for set diffrent colors to each probe
-    List<String> colors = new ArrayList<>(Arrays.asList("-fx-background-color:blue;", "-fx-background-color:yellow;", "-fx-background-color:red;", "-fx-background-color:pink;", 
-            "-fx-background-color:green;", "-fx-background-color:orange;", "-fx-background-color:golden;", "-fx-background-color:purple;", "-fx-background-color:AQUA;",
-            "-fx-background-color:BLUEVIOLET;", "-fx-background-color:#F5F5DC;", "-fx-background-color:BISQUE;", "-fx-background-color:brown;", "-fx-background-color:CORAL;"));
+    List<String> colors = new ArrayList<>(Arrays.asList("-fx-background-color:#B0E0E6;", "-fx-background-color:yellow;", "-fx-background-color:#CD5C5c;", "-fx-background-color:pink;", 
+            "-fx-background-color:#ADFF2F;", "-fx-background-color:orange;", "-fx-background-color:#FFD700;", "-fx-background-color:#DDA0DD;", "-fx-background-color:AQUA;",
+            "-fx-background-color:#87CEFA;", "-fx-background-color:#F5F5DC;", "-fx-background-color:BISQUE;", "-fx-background-color:brown;", "-fx-background-color:CORAL;"));
     
     
 //probe table area    
@@ -215,11 +212,11 @@ public class HomepageController implements Initializable {
     
     //bead plate set up status table
     @FXML
-    private TableView<PlateStatus> beadPlateStatusTable;
+    private TableView<PlateStatus> beadPlateStatusTable = new TableView<PlateStatus>();
     @FXML
-    private TableColumn<PlateStatus, String> beadPlateCol;
+    private TableColumn<PlateStatus, String> beadPlateCol =  new TableColumn<PlateStatus, String> ();
     @FXML
-    private TableColumn<PlateStatus, String> confirmedCol;
+    private TableColumn<PlateStatus, String> confirmedCol = new TableColumn<PlateStatus,String>();
     private  ObservableList<PlateStatus> status = FXCollections.observableArrayList();
     
 
@@ -245,21 +242,24 @@ public class HomepageController implements Initializable {
     public void initialize(URL url, ResourceBundle rb)   {      
 
         List<List<String>> probeLists = null;
+        List<List<String>> probeLists2 = null;
         try {
             probeLists = ModelForExperiments.getInstance().getProbesForExperimentType1();
+            probeLists2 = ModelForExperiments.getInstance().getProbesForPlate2();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(HomepageController.class.getName()).log(Level.SEVERE, null, ex);
         }
         for(int i = 0; i < probeLists.size(); i++)
         {
             List<String> probesForOneTable = probeLists.get(i);
+            List<String> probesFortwoTable = probeLists2.get(i);
 
             for(int j = 1; j <= probesForOneTable.size();j++)
                 {
                     if(i==0)
                          probesToLoad1.add(new probeTableData(j, probesForOneTable.get(j-1)));
                     if(i==1)
-                         probesToLoad2.add(new probeTableData(j, probesForOneTable.get(j-1)));
+                         probesToLoad2.add(new probeTableData(j, probesFortwoTable.get(j-1)));
                     if(i==2)
                          probesToLoad3.add(new probeTableData(j, probesForOneTable.get(j-1)));
                 }            
