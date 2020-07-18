@@ -6,11 +6,7 @@
 package Controller;
 
 import Model.ModelForExperiments;
-import Model.PlateStatus;
 import Util.ErrorMsg;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -20,6 +16,10 @@ import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Menu;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * FXML Controller class

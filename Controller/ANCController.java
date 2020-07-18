@@ -9,48 +9,28 @@ import Model.ModelForExperiments;
 import Model.UserInputForBeadPlate;
 import Model.bead;
 import Model.probeTableData;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
-import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
-import java.util.*;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.solvers.BrentSolver;
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoints;
-import Controller.SpreadSheetController;
+import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
+
 import java.io.IOException;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import java.net.URL;
+import java.util.*;
 /**
  * FXML Controller class
  *
@@ -260,7 +240,7 @@ public class ANCController implements Initializable {
             {
                 curSample = j;
                 CheckBox  btn = new CheckBox ();
-                btn.setText("");
+                btn.setText("sampleName");
                 btn.setAlignment(Pos.CENTER);
                 
                 btn.setOnAction(new EventHandler<ActionEvent>() {
@@ -517,7 +497,7 @@ public class ANCController implements Initializable {
         // clear previous data if any 
         gpForANC.getChildren().clear();
        // platesGridPane.gridLinesVisibleProperty().set(true);
-        
+
        // display sample name on the top of the table
       UserInputForBeadPlate input = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(curExperiment).get(0); // get the user input for 1st plate
       String[] names = input.getNames();

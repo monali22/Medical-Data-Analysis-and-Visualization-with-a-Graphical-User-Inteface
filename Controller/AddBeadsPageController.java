@@ -221,8 +221,8 @@ public class AddBeadsPageController implements Initializable {
         }
         newProbes = newProbes.substring(0, newProbes.length()-1); // get rid of the last ","
         String currentLocation = System.getProperty("user.dir").toString();
-        System.out.println(currentLocation);
-        File file =new File("/Users/kuldeep/Documents/CSS600/Medical-Data-Analysis-and-Visualization-with-a-Graphical-User-Inteface/Controller/probes1.txt");
+         
+        File file =new File(currentLocation +"\\probes1.txt");
         Scanner sc = new Scanner(file); 
         int index =1;
         String oldProbes = "";
@@ -241,7 +241,7 @@ public class AddBeadsPageController implements Initializable {
         
         String newtext = oldProbes.replaceAll(lineToBeReplaced, newProbes);
         
-        FileWriter writer = new FileWriter("/Users/kuldeep/Documents/CSS600/Medical-Data-Analysis-and-Visualization-with-a-Graphical-User-Inteface/Controller/probes1.txt");
+        FileWriter writer = new FileWriter(currentLocation +"\\probes1.txt");
         writer.write(newtext);
         writer.close();
         

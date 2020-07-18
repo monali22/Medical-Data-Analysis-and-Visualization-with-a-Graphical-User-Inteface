@@ -101,7 +101,6 @@ public HashMap<Integer, HashMap<Integer,  Double>> getMedianValueData(String fil
     // start parsing data from the xml file
     XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
     try {
-        //System.out.println(fileName);
         XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(new FileInputStream(fileName));
         while(xmlEventReader.hasNext()){
             XMLEvent xmlEvent = xmlEventReader.nextEvent();                
