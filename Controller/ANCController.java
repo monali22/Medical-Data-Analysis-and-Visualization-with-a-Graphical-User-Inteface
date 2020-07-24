@@ -94,6 +94,7 @@ public class ANCController implements Initializable {
     int numExperiments = 0; //number of experiments 
     int numSamples = 0;
     int numPlates = 0;//number of plates
+    String[] sampleNames; //names of the samples for sample selection
     
     ArrayList<ArrayList<Double>> coEfList;
     ArrayList<Integer> toalNonZero;
@@ -138,6 +139,7 @@ public class ANCController implements Initializable {
         largestSamples =  ModelForExperiments.getInstance().getLargestSampleCount();
         mapOfSamplesNumbers = ModelForExperiments.getInstance().getMapOfSamplesNumbers();
         analytes = ModelForExperiments.getInstance().getAnalytes();
+        sampleNames = ModelForExperiments.getInstance().getSampleNames();
 
         ProbeNums = new double[experiments];
         IPProbesNums = new double[experiments];
@@ -240,7 +242,7 @@ public class ANCController implements Initializable {
             {
                 curSample = j;
                 CheckBox  btn = new CheckBox ();
-                btn.setText("sampleName");
+                btn.setText(sampleNames[j - 1]);
                 btn.setAlignment(Pos.CENTER);
                 
                 btn.setOnAction(new EventHandler<ActionEvent>() {
