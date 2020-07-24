@@ -6,7 +6,6 @@
 package Model;
 
 import java.util.List;
-import javafx.collections.ObservableList;
 
 /**
  *
@@ -17,7 +16,7 @@ public class UserInputForBeadPlate {
     private int  numberOfSamples;
     private  int numberOfReplicas;
     private String namesInput;
-    private  String[] names;
+    private String[] names;
     private  int numberOfProbes;
     private  List<String> probeList;
 

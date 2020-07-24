@@ -1,18 +1,12 @@
 package Model;
 
 
-import Util.ErrorMsg;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import Model.UserInputForBeadPlate;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -89,7 +83,7 @@ public class ModelForExperiments {
     private int curProbe =0;
     private int curSample = 0;
     private int numberOfSamples = 0;
-    private String[] sampleNames;
+    private static String[] sampleNames;
     
     
     //Fold change Page

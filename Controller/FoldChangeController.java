@@ -61,6 +61,8 @@ public class FoldChangeController implements Initializable {
     int probes = 0; // samlleset probes for the two slected samples. 
     String sample1 ="";
     String sample2 = "";
+    String[] sampleNames; // names of samples for button labels
+
     @FXML
     private Text sample1Name;
     @FXML
@@ -83,10 +85,12 @@ public class FoldChangeController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
         experiments = ModelForExperiments.getInstance().getNumberOfExperiments();
         largestSamples =  ModelForExperiments.getInstance().getLargestSampleCount();
         mapOfSamplesNumbers = ModelForExperiments.getInstance().getMapOfSamplesNumbers();
         analytes = ModelForExperiments.getInstance().getAnalytes();
+        sampleNames = ModelForExperiments.getInstance().getSampleNames();
 
         
         tableRow(experiments);    
@@ -97,7 +101,13 @@ public class FoldChangeController implements Initializable {
         
 
         
-    }    
+    }
+
+    // updates sample names from HomepageController.java
+    public void sampleNameRetriever(String[] names)
+    {
+        sampleNames = names;
+    }
 
    //dynamically add rows for gridpane base on previous user input. 
     public  GridPane tableRow(int rows){
@@ -138,8 +148,10 @@ public class FoldChangeController implements Initializable {
             for(int j = 1; j <=getLargestSampleCountForOneExperiment(i); j++)
             {
                 //curSample = j;
+
+
                 RadioButton btn = new RadioButton();
-                btn.setText(HomepageController.class.getName());
+                btn.setText(sampleNames[j - 1]); //TODO***********************************************
                 btn.setAlignment(Pos.CENTER);
                 btn.setOnAction(new EventHandler<ActionEvent>() {
                     @Override

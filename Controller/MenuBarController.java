@@ -43,6 +43,8 @@ public class MenuBarController implements Initializable{
     @FXML
     private Menu NED;
 
+    String[] samplesNames;
+
     /**
      * Initializes the controller class.
      */
@@ -66,9 +68,7 @@ public class MenuBarController implements Initializable{
             .onAction(new EventHandler<ActionEvent>(){
                 @Override public void handle(ActionEvent t) {
                     switchToMedianValue() ;
-             } 
-
-
+             }
             })
             .build()
         );        
@@ -193,6 +193,8 @@ public class MenuBarController implements Initializable{
         URL paneTwoUrl = getClass().getResource("/View/FoldChange.fxml");
         AnchorPane paneTwo = FXMLLoader.load( paneTwoUrl );
 
+
+
         BorderPane border = Main.getRoot();
         border.setCenter(paneTwo);
 
@@ -215,6 +217,10 @@ public class MenuBarController implements Initializable{
           e.printStackTrace();
         }
     }     
-        
+
+    public String[] getSampleNames()
+    {
+        return samplesNames;
+    }
         
 }

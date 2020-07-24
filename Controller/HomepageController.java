@@ -294,7 +294,8 @@ public class HomepageController implements Initializable {
             currentExperiementNumber.setText(String.valueOf(curExperiment));
             ModelForExperiments.getInstance().setCurrentExperiment(curExperiment);
             List<String> files = ModelForExperiments.getInstance().getExperimentsXMLFileMap().get(curExperiment);
-            XMLfilesNames.setText(generateXMLFilesString(files));                
+            XMLfilesNames.setText(generateXMLFilesString(files));
+
         }            
 
         // populate analytes data. 
@@ -481,7 +482,7 @@ public class HomepageController implements Initializable {
         else
         {
             ErrorMsg error = new ErrorMsg();
-            error.showError("Files valid!");
+            error.showError("Files Invalid!");
         }           
         updateExperimentsInfo();
     }
@@ -517,6 +518,11 @@ public class HomepageController implements Initializable {
         confirmedCol.setCellValueFactory(new PropertyValueFactory<PlateStatus,String>("status"));
         beadPlateStatusTable.setItems(status);    
         //numSampleInput1.setText("2");
+    }
+
+    public UserInputForBeadPlate getBeadInput()
+    {
+        return defaultUserInput;
     }
     
    // change plate status to Yes after user click "confirm input " button 
@@ -975,7 +981,12 @@ public class HomepageController implements Initializable {
                 if(!beadPlate3Tab.isDisabled()) clearUserInputForBeadPlate3();   
         }
     }
-    
+
+    public String[] getSampleNames()
+    {
+        return names;
+    }
+
     public void clearUserInputForBeadPlate1()
     {
         numSampleInput1.clear();
@@ -1144,7 +1155,7 @@ public class HomepageController implements Initializable {
         displayBeadsPlateLayout(curExperiment);        
         displayProbeTable(size);
         HashMap<Integer, HashMap<Integer, ObservableList<probeTableData>>> probesListForPopulate  = ModelForExperiments.getInstance().getProbeMapForPopulate(); // debug
-   
+
     }
     
     // load probe and diaply probes on to probe tables base on xml files size. 
@@ -1499,6 +1510,9 @@ public class HomepageController implements Initializable {
 
         String names = sampleNamesInput1.getText();
         String[] nameList = names.split(",");
+
+        ModelForExperiments.getInstance().setSampleNames(nameList);
+
         List<String> probeList = new ArrayList<>();
         //combine user inputs and probeList into a UserInputForBeadPlate object
         userInputsForBeadPlate.add(new UserInputForBeadPlate(numberOfSamples, numberOfReps,names, nameList,

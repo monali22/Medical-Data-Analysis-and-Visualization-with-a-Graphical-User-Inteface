@@ -57,6 +57,8 @@ public class MedianValueController implements Initializable {
     int curSample =0;
     int curExperiment = 0;
 
+
+
     @FXML
     private ScrollPane sp1;
 
@@ -70,14 +72,14 @@ public class MedianValueController implements Initializable {
     @FXML
     private GridPane platesGridPane;
     @FXML
-    private Text sampleName;
+    private Text sampleName; // names of samples for button views
     
     //info for pop up page
     private int analyteIndexForPopUpPage =0;
     private int plateIndexForPopUpPage =0;
     private int probeIndexForPopUpPage =0;
     String[] samplesNames ;
-    
+
     /**
      * Initializes the controlayoutCellsListller class.
      */
@@ -85,7 +87,8 @@ public class MedianValueController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
          
         experiments = getInstance().getNumberOfExperiments();
-        samples = getLargestSampleCountForAllExperiment();  
+        samples = getLargestSampleCountForAllExperiment();
+
        
         analytes = getInstance().getAnalytes();
         calcaluateMedianValueMatrix();
@@ -152,7 +155,6 @@ public class MedianValueController implements Initializable {
 
     //create radio button for user to choose from.
     private void fillRadioButton() {
-       
 
         for(int i = 1; i <= experiments; i++)
         {
@@ -160,7 +162,7 @@ public class MedianValueController implements Initializable {
             {
                 curSample = j;
                 RadioButton btn = new RadioButton();
-                btn.setText("Unames[j - 1]"); //TODO: Find sample names
+                btn.setText(samplesNames[j - 1]);
                 btn.setAlignment(Pos.CENTER);
                 if(group.getToggles().isEmpty())  // set the 1st button defalt to be selected 
                 {
@@ -185,7 +187,8 @@ public class MedianValueController implements Initializable {
        // display sample name on the top of the table
       UserInputForBeadPlate input = getInstance().getUserInputsForBeadPlateMap().get(curExperiment).get(0); // get the user input for 1st plate
       String[] names = input.getNames();
-      sampleName.setText(names[curSample -1]); // show sample name for the median value table        
+        //String[] names = input.getNames();
+      sampleName.setText(names[curSample -1]); // show sample name for the median value table
         //diaply analyte information on the 1st colomn
         analytes = getInstance().getAnalytes();
         for(int i = 1; i <= analytes.size();i++)
@@ -444,6 +447,10 @@ public class MedianValueController implements Initializable {
                try {
                 FXMLLoader fxmlLoader = new FXMLLoader();
                 root = fxmlLoader.load(url);
+
+//                FoldChangeController fcController = fxmlLoader.getController();
+//                fcController.sampleNameRetriever(samplesNames);
+
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root));  
                 stage.showAndWait();

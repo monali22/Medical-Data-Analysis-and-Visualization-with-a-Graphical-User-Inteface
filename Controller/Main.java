@@ -34,7 +34,11 @@ public class Main extends Application {
         
         stage.setScene(scene);
         stage.show(); */
-       
+
+
+
+
+
     URL menuBarUrl = getClass().getResource("/View/menuBar.fxml");
     MenuBar bar = FXMLLoader.load( menuBarUrl );         
                
