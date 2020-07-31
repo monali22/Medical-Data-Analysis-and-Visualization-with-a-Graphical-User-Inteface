@@ -153,16 +153,13 @@ public class ANCController implements Initializable {
         spForANC.setContent(gpForANC);
         spForANC2.setContent(gpForANC2);
         spForANC3.setContent(gpForANC3);
-        
-        
-        
+
         IPPHits = new ArrayList<String>();
         PValueCellHits = new ArrayList<ArrayList<double[]>>();
         FCValueCellHits = new ArrayList<ArrayList<double[]>>();
         agreeCellHits = new ArrayList<ArrayList<Integer>>();
         listOfGrid = new ArrayList();
-        
-        
+
         if(HitsTab.size()==0)
         {
             
@@ -757,16 +754,60 @@ public class ANCController implements Initializable {
     }
     private void GlobalHits(ArrayList<ArrayList<HashMap<Integer, Double>>> PValueCell, HashMap<Integer,List<HashMap<Integer,Double>>> FCCell,  ArrayList<ArrayList<ArrayList<Double>>> PCutoffCell) throws IOException{
 
-            double[][][] PerAgreeCell = {{{1}}, 
-                                        {{2}, {2,1}},
-                                        {{3}, {3,2}, {3,2,1}},
-                                        {{4}, {4,3}, {4,3,2}, {4,3,2,1}},
-                                        {{5},{5,4},{5,4,3},{5,4,3,2},{5,4,3,2,1}},
-                                        {{6},{6,5},{6,5,4},{6,5,4,3},{6,5,4,3,2},{6,5,4,3,2,1}},
-                                        {{7},{7,6}, {7,6,5},{7,6,5,4},{7,6,5,4,3},{7,6,5,4,3,2},{7,6,5,4,3,2,1}},
-                                        {{8},{8,7},{8,7,6},{8,7,6,5},{8,7,6,5,4},{8,7,6,5,4,3}, {8,7,6,5,4,3,2},{8,7,6,5,4,3,2,1}}
-                                        };
-        singlehit(PValueCell,FCCell,PCutoffCell,PerAgreeCell);
+        //// hardcoded version
+//            double[][][] PerAgreeCell = {{{1}},
+//                                        {{2}, {2,1}},
+//                                        {{3}, {3,2}, {3,2,1}},
+//                                        {{4}, {4,3}, {4,3,2}, {4,3,2,1}},
+//                                        {{5},{5,4},{5,4,3},{5,4,3,2},{5,4,3,2,1}},
+//                                        {{6},{6,5},{6,5,4},{6,5,4,3},{6,5,4,3,2},{6,5,4,3,2,1}},
+//                                        {{7},{7,6}, {7,6,5},{7,6,5,4},{7,6,5,4,3},{7,6,5,4,3,2},{7,6,5,4,3,2,1}},
+//                                        {{8},{8,7},{8,7,6},{8,7,6,5},{8,7,6,5,4},{8,7,6,5,4,3}, {8,7,6,5,4,3,2},{8,7,6,5,4,3,2,1}}
+//                                        };
+
+        ///////////Vector version
+//        Vector<Vector<Vector<Double>>> perAgreeCell = new Vector(1);
+//        for(int i = 0; i < experiments; i++)
+//        {
+//            int tracer = i;
+//            Vector<Vector<Double>>element2 = new Vector(1);
+//            for(int j = 0; j<= i; j++)
+//            {
+//                Vector<Double>element3 = new Vector(1);
+//                for(int k = i; k >= 0 && k-tracer >= 0; k--)
+//                {
+//                    element3.add((double)(k+1));
+//                }
+//                tracer--;
+//                element2.add(element3);
+//            }
+//            perAgreeCell.add(element2);
+//        }
+
+        ///array version
+         ////// Creates a 3D matrix of jagged arrays with decending numbers based on # of experiments
+        double[][][] perAgreeCell = new double[experiments][][];
+
+        for(int i = 0; i < experiments; i++)
+        {
+            int tracer = i;
+            int counter = 0;
+            perAgreeCell[i] = new double[i + 1][];
+            for(int j = 0; j<= i; j++)
+            {
+                double[] temp = new double[j+1];
+                for(int k = i; k >= 0 && k-tracer >= 0; k--, counter++)
+                {
+                    temp [counter] = (double)(k+1);
+                }
+                perAgreeCell[i][j] = temp;
+                tracer--;
+                counter = 0;
+            }
+        }
+
+
+        singlehit(PValueCell,FCCell,PCutoffCell,perAgreeCell);
         System.out.println(FCCell.size());
         
     }
@@ -1212,7 +1253,7 @@ public class ANCController implements Initializable {
      * @param PValueCell
      * @param FCCell
      * @param PCutoffCell
-     * @param PerAgree 
+     * @param PerAgree
      */
     private void singlehit(ArrayList<ArrayList<HashMap<Integer, Double>>> PValueCell, HashMap<Integer,List<HashMap<Integer,Double>>> FCCell,  ArrayList<ArrayList<ArrayList<Double>>> PCutoffCell,double[][][] PerAgree) throws IOException{
         
