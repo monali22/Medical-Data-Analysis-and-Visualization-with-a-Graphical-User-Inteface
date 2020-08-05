@@ -22,6 +22,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
+import javafx.util.Pair;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.solvers.BrentSolver;
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
@@ -785,7 +786,7 @@ public class ANCController implements Initializable {
 //        }
 
         ///array version
-         ////// Creates a 3D matrix of jagged arrays with decending numbers based on # of experiments
+         ////// Creates a jagged 3D array matrix of descending numbers based on # of experiments
         double[][][] perAgreeCell = new double[experiments][][];
 
         for(int i = 0; i < experiments; i++)
@@ -1728,24 +1729,170 @@ private void createALLSpreadSheet(ArrayList<String> IPP, ArrayList<ArrayList<dou
      */
     private void EmpAdjPValueList(int experiments, double MHpvalue,double NRepValues){
         //Binom Coeff Cell 
-        double[][][] BCC = {{{1,0,0},{0,0,1}}, 
-                          {{2,0,0},{0,0,2},{1,1,0},{1,0,1},{0,1,1}}, 
-                          {{3,0,0},{0,0,3},{2,1,0},{2,0,1},{0,1,2},{1,0,2},{1,2,0},{1,1,1},{0,2,1}},
-                          {{4,0,0},{0,0,4},{3,1,0},{3,0,1},{0,1,3},{1,0,3},{2,2,0},{2,1,1},{2,0,2},{0,2,2},{1,1,2},{1,3,0},{1,2,1},{0,3,1}},
-                          {{5,0,0},{0,0,5},{4,1,0},{4,0,1},{0,1,4},{1,0,4},{3,2,0},{3,1,1},{3,0,2},{0,2,3},{1,1,3},{2,0,3},{2,3,0},{2,2,1},{2,1,2},{1,2,2},{0,3,2},{1,4,0},{1,3,1},{0,4,1}},
-                          {{6,0,0},{0,0,6},{5,1,0},{5,0,1},{0,1,5},{1,0,5},{4,2,0},{4,1,1},{4,0,2},{0,2,4},{1,1,4},{2,0,4},{3,3,0},{3,2,1},{3,1,2},{3,0,3},{0,3,3},{1,2,3},{2,1,3},{2,4,0},{2,3,1},{2,2,2},{0,4,2},{1,3,2},{1,5,0},{1,4,1},{0,5,1}},
-                          {{7,0,0},{0,0,7},{6,1,0},{6,0,1},{0,1,6},{1,0,6},{5,2,0},{5,1,1},{5,0,2},{0,2,5},{1,1,5},{2,0,5},{4,3,0},{4,2,1},{4,1,2},{4,0,3},{0,3,4},{1,2,4},{2,1,4},{3,0,4},{3,4,0},{3,3,1},{3,2,2},{3,1,3},{0,4,3},{1,3,3},{2,2,3},{2,5,0},{2,4,1},{2,3,2},{0,5,2},{1,4,2},{1,6,0},{1,5,1},{0,6,1}},
-                          {{8,0,0},{0,0,8},{7,1,0},{7,0,1},{0,1,7},{1,0,7},{6,2,0},{6,1,1},{6,0,2},{0,2,6},{1,1,6},{2,0,6},{5,3,0},{5,2,1},{5,1,2},{5,0,3},{0,3,5},{1,2,5},{2,1,5},{3,0,5},{4,4,0},{4,3,1},{4,2,2},{4,1,3},{4,0,4},{1,3,4},{2,2,4},{3,1,4},{3,5,0},{3,4,1},{3,3,2},{3,2,3},{0,5,3},{1,4,3},{2,6,0},{2,5,1},{2,4,2},{0,6,2},{1,5,2},{1,7,0},{1,6,1},{0,7,1}},
-                          };
-        
+//        double[][][] BCC =
+////                         {{{1,0,0},{0,0,1}},
+////                          {{2,0,0},{0,0,2},{1,1,0},{1,0,1},{0,1,1}},
+////                          {{3,0,0},{0,0,3},{2,1,0},{2,0,1},{0,1,2},{1,0,2},{1,2,0},{1,1,1},{0,2,1}},
+////                          {{4,0,0},{0,0,4},{3,1,0},{3,0,1},{0,1,3},{1,0,3},{2,2,0},{2,1,1},{2,0,2},{0,2,2},{1,1,2},{1,3,0},{1,2,1},{0,3,1}},
+////                          {{5,0,0},{0,0,5},{4,1,0},{4,0,1},{0,1,4},{1,0,4},{3,2,0},{3,1,1},{3,0,2},{0,2,3},{1,1,3},{2,0,3},{2,3,0},{2,2,1},{2,1,2},{1,2,2},{0,3,2},{1,4,0},{1,3,1},{0,4,1}},
+////                          {{6,0,0},{0,0,6},{5,1,0},{5,0,1},{0,1,5},{1,0,5},{4,2,0},{4,1,1},{4,0,2},{0,2,4},{1,1,4},{2,0,4},{3,3,0},{3,2,1},{3,1,2},{3,0,3},{0,3,3},{1,2,3},{2,1,3},{2,4,0},{2,3,1},{2,2,2},{0,4,2},{1,3,2},{1,5,0},{1,4,1},{0,5,1}},
+////                          {{7,0,0},{0,0,7},{6,1,0},{6,0,1},{0,1,6},{1,0,6},{5,2,0},{5,1,1},{5,0,2},{0,2,5},{1,1,5},{2,0,5},{4,3,0},{4,2,1},{4,1,2},{4,0,3},{0,3,4},{1,2,4},{2,1,4},{3,0,4},{3,4,0},{3,3,1},{3,2,2},{3,1,3},{0,4,3},{1,3,3},{2,2,3},{2,5,0},{2,4,1},{2,3,2},{0,5,2},{1,4,2},{1,6,0},{1,5,1},{0,6,1}},
+////                          {{8,0,0},{0,0,8},{7,1,0},{7,0,1},{0,1,7},{1,0,7},{6,2,0},{6,1,1},{6,0,2},{0,2,6},{1,1,6},{2,0,6},{5,3,0},{5,2,1},{5,1,2},{5,0,3},{0,3,5},{1,2,5},{2,1,5},{3,0,5},{4,4,0},{4,3,1},{4,2,2},{4,1,3},{4,0,4},{1,3,4},{2,2,4},{3,1,4},{3,5,0},{3,4,1},{3,3,2},{3,2,3},{0,5,3},{1,4,3},{2,6,0},{2,5,1},{2,4,2},{0,6,2},{1,5,2},{1,7,0},{1,6,1},{0,7,1}},
+////                          };
+
+        double[][][] binomCoeffCell = new double[experiments][][]; //replaces hardcode above
+
+        for(int i = 0; i < experiments; i++)
+        {
+            binomCoeffCell[i] = new double[i + 1][];
+            binomCoeffCell[i] = bCCHelper(i+1);
+        }
+
         pOutValList = new ArrayList<ArrayList<ArrayList<Double>>>();
         //BinomPvalue Calulation 
         for(int i = 0; i < experiments; i++){
-            pOutValList.add(BinomPValue(BCC[i],i+1, MHpvalue));
+            pOutValList.add(BinomPValue(binomCoeffCell[i],i+1, MHpvalue));
        }
-
     }
-  
+
+
+    ////// helper method that fills the binomial coefficient cell (binomCoeffCell)
+    public static double[][] bCCHelper(double operand)
+    {
+        Vector<double[]> growingStorage = new Vector<>(1); //stores non-duplicate array permutations
+        double[] biCoeff = {operand,0,0}; //first zero-remainder permutation
+        double[] biCoeff2 = {0.0, 0.0, operand}; //second zero-remainder permutation
+        double[] lastBiCoeff = biCoeff2.clone(); //stores last attempted permutation
+        double decOperand = operand; //operand value that decrements until zero
+        double remainder = 0; // the difference between decOperand and operand
+        boolean goRight = false; //keeps track of permutation direction
+
+        //adds zero remainder permutations to storage vector
+        growingStorage.add(biCoeff);
+        growingStorage.add(biCoeff2);
+
+        while(operand != remainder)//permute and fill storage vector
+        {
+            double[] biCoeff3; //stores previous permuted sequence
+
+            if(decOperand == operand)
+            {
+                biCoeff3 = biCoeff2.clone();
+            }
+            else
+            {
+                biCoeff3 = lastBiCoeff.clone();
+            }
+
+            // method call to permute binomial coefficient
+            Pair<double[], Boolean> returned = permute(biCoeff3, operand, remainder, goRight);
+
+            if(returned == null) //invalid permutation sequence
+            {
+                break;
+            }
+            goRight = returned.getValue();
+            biCoeff3 = returned.getKey();
+            lastBiCoeff = biCoeff3.clone();
+
+            if(goRight)
+            {
+                remainder = biCoeff3[1] + biCoeff3[2];
+            }
+            else
+            {
+                remainder = biCoeff3[0] + biCoeff3[1];
+            }
+
+            //check for duplicates here before adding to growing storage.
+            boolean duplicate = false;
+            double[] arrayDuplicates;
+
+            for(int i = 0; i < growingStorage.size(); i++)
+            {
+                arrayDuplicates = growingStorage.get(i).clone();
+                if( Arrays.equals(arrayDuplicates, biCoeff3))
+                {
+                    duplicate = true;
+                    break;
+                }
+            }
+
+            if(!duplicate) //no duplicates
+            {
+                growingStorage.add(biCoeff3);
+            }
+            decOperand--;
+        }
+
+        //change to array form for return
+        double[][] returnArray = new double[growingStorage.size()][];
+        growingStorage.toArray(returnArray);
+
+        return returnArray;
+    }
+
+
+    // permutes binomial coefficient values to be added to the sequence of the binomial coefficient cell
+    public static Pair<double[], Boolean> permute(double[] biCoeff, double operand, double remainder, boolean goRight)
+    {
+        if(operand <= 0 ) ////check for invalid operand
+            return null;
+
+        double operandBase = operand - remainder;
+        double left = biCoeff[0];
+        double center = biCoeff[1];
+        double right = biCoeff[2];
+
+        if(left == 0 && right == 1) // end of sequence for the operand
+        {
+            return null;
+        }
+
+        if(center == 0) // flips direction and values
+        {
+            if(goRight)
+            {
+                center = right;
+                right = left;
+                left = 0;
+                goRight = false;
+            }
+            else
+            {
+                left = operandBase - 1;
+                remainder++;
+                center = remainder;
+                right = 0;
+                goRight = true;
+
+                if(left <= 0) //end of this sequence
+                {
+                    return null;
+                }
+            }
+        }
+        else //permutation
+        {
+            center--;
+
+            if(goRight)
+            {
+                right++;
+            }
+            else
+            {
+                left++;
+            }
+        }
+        double[] returnArray = {left, center, right};
+        return new Pair<>(returnArray, goRight);
+    }
+
+
+
+
+
    
        
     /**
