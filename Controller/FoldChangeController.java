@@ -56,7 +56,7 @@ public class FoldChangeController implements Initializable {
     
     //ToggleGroup group = new ToggleGroup(); // For manage radio buttons for users to select. 
     List<RadioButton> radioButtons = new ArrayList<>();
-    List<RadioButton> slectedRBs = new ArrayList<>();
+    List<RadioButton> selectedRBs = new ArrayList<>();
     int plates = 0; // samlleset plate count for the two slected samples 
     int probes = 0; // samlleset probes for the two slected samples. 
     String sample1 ="";
@@ -141,7 +141,28 @@ public class FoldChangeController implements Initializable {
         // margins are up to your preference
         GridPane.setMargin(label, new Insets(5));
      }
-    }    
+    }  
+    
+    /*
+    * precondtions: two radio buttons have been clicked on.
+    * helper method for fillRadioButton() that checks if two
+    * radio buttons that are part of the selectedRBs list are
+    * actually filled in.
+    *
+    * NOTE: this is necessary to make the two samples being compared
+    * more clear, as it used to be possible to compare two samples
+    * when one of their radio buttons wasn't actually filled in,
+    * this may have looked confusing to the end users.
+    */
+    private boolean radioButtonsSelected() {
+        return selectedRBs.get(0).isSelected() && selectedRBs.get(1).isSelected();
+    }
+    
+    // testing method
+    private String buttonsSelected() {
+        return  selectedRBs.get(0).isSelected() + ", " + selectedRBs.get(1).isSelected();
+    }
+    
     private void fillRadioButton() {
         for(int i = 1; i <= experiments; i++)
         {
@@ -157,27 +178,34 @@ public class FoldChangeController implements Initializable {
                     @Override
                     public void handle(ActionEvent event) {
                         if(btn.isSelected()){
-                            if(slectedRBs.size()<2)
+                            if(selectedRBs.size()<2)
                             {
-                                    slectedRBs.add(btn);
+                                    selectedRBs.add(btn);
+                                    System.out.println(buttonsSelected()); // test method
                                     //int row = gridPane.getRowIndex(btn);
                                     //int col = gridPane.getColumnIndex(btn);
                                     //choosenSamples.add(new ArrayList<Integer>(Arrays.asList(row,col)));
                                 }
                             else
                             {
-                                slectedRBs.get(0).setSelected(false); // set the 1st element unselected
-                                slectedRBs.remove(0); // remove 1st element from the selected list
+                                selectedRBs.get(0).setSelected(false); // set the 1st element unselected
+                                selectedRBs.remove(0); // remove 1st element from the selected list
                                 //choosenSamples.remove(0);
-                                slectedRBs.add(btn);
+                                selectedRBs.add(btn);
+                                System.out.println(buttonsSelected()); // test method
                                // System.out.println("No more than two buttons! ");
                             }
                             
-                            if(slectedRBs.size() ==2)
+                            if(selectedRBs.size() == 2 && radioButtonsSelected())
                                 {
                                     defaultCutOffValue = Double.parseDouble(cutOffValueBox.getText());
                                     showFoldChange(defaultCutOffValue);
                                 }
+                        }
+                        else {
+                            // in case button has been deselected, we want to remove it from the list
+                            
+                            selectedRBs.remove(btn); // returns false if the button wasn't in the list to begin with
                         }
                     }
 
@@ -203,15 +231,15 @@ public class FoldChangeController implements Initializable {
     
     
     private void showFoldChange(double cutOff) {
-        int  experimementPos1 = gridPane.getRowIndex(slectedRBs.get(0));
-        int sampleIndex1 = gridPane.getColumnIndex(slectedRBs.get(0)) -1;
-        int experimementPos2 = gridPane.getRowIndex(slectedRBs.get(1));
-        int sampleIndex2 = gridPane.getColumnIndex(slectedRBs.get(1)) -1;
+        int  experimementPos1 = gridPane.getRowIndex(selectedRBs.get(0));
+        int sampleIndex1 = gridPane.getColumnIndex(selectedRBs.get(0)) -1;
+        int experimementPos2 = gridPane.getRowIndex(selectedRBs.get(1));
+        int sampleIndex2 = gridPane.getColumnIndex(selectedRBs.get(1)) -1;
         sample1 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos1).get(0).getNames()[sampleIndex1];
         sample2 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos2).get(0).getNames()[sampleIndex2];
        // display sample name on the top of the table
-       sample1Name.setText("Experiment " + Integer.toString(gridPane.getRowIndex(slectedRBs.get(0))) + " " + sample1 + ", ");
-       sample2Name.setText("Experiment " + Integer.toString(gridPane.getRowIndex(slectedRBs.get(1))) + " " + sample2);
+       sample1Name.setText("Experiment " + Integer.toString(gridPane.getRowIndex(selectedRBs.get(0))) + " " + sample1 + ", ");
+       sample2Name.setText("Experiment " + Integer.toString(gridPane.getRowIndex(selectedRBs.get(1))) + " " + sample2);
        
       foldChangeMatrix = calculateFoldChange(experimementPos1,sampleIndex1,experimementPos2,sampleIndex2);
       
@@ -235,7 +263,7 @@ public class FoldChangeController implements Initializable {
         
 
     //display plate information on the 1st row & probes infor on the 2nd row
-      //  int curExperiment = slectedRBs.get(0).
+      //  int curExperiment = selectedRBs.get(0).
       //  HashMap<Integer, ObservableList<probeTableData>> probesListForCurExperiment = ModelForExperiments.getInstance().getProbeMapForPopulate().get(curExperiment); 
       //  int countsOfPlates = probesListForCurExperiment.size() -1; // initilize probelistForCurexperiment contains key=0 value, which is never used and is empty
         // display probes 
@@ -371,7 +399,7 @@ public class FoldChangeController implements Initializable {
 
     private int getPreProbes(int platePos) {
         int preProbes = 0; 
-        HashMap<Integer, ObservableList<probeTableData>> probesListForCurExperiment = ModelForExperiments.getInstance().getProbeMapForPopulate().get(gridPane.getRowIndex(slectedRBs.get(0)));             
+        HashMap<Integer, ObservableList<probeTableData>> probesListForCurExperiment = ModelForExperiments.getInstance().getProbeMapForPopulate().get(gridPane.getRowIndex(selectedRBs.get(0)));             
         for(int i = 1; i< platePos;i++ ) // don't count the current plate
          {
              preProbes += probesListForCurExperiment.get(i).size();
