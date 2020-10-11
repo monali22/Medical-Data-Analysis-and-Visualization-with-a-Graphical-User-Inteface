@@ -55,8 +55,12 @@ public class FoldChangeController implements Initializable {
     //List<List<Integer>> choosenSamples = new ArrayList<>(); 
     
     //ToggleGroup group = new ToggleGroup(); // For manage radio buttons for users to select. 
-    List<RadioButton> radioButtons = new ArrayList<>();
+    List<RadioButton> experimentButtons = new ArrayList<>(); // list of buttons to select an experiment
+    //List<RadioButton> radioButtons = new ArrayList<RadioButton>();
+    List<ArrayList<RadioButton>> radioButtons = new ArrayList<ArrayList<RadioButton>>();
+
     List<RadioButton> selectedRBs = new ArrayList<>();
+    List<RadioButton> selectedEBs = new ArrayList<>();
     int plates = 0; // samlleset plate count for the two slected samples 
     int probes = 0; // samlleset probes for the two slected samples. 
     String sample1 ="";
@@ -117,7 +121,7 @@ public class FoldChangeController implements Initializable {
         gridPane.getColumnConstraints().add(column);
         Label label = new Label();
         String s = "  Experiment " + i;
-        label.setText(s);    
+        //label.setText(s);    
         //textField.setAlignment(Pos.CENTER);
         label.autosize();
         gridPane.add(label,0,i);
@@ -162,62 +166,144 @@ public class FoldChangeController implements Initializable {
     private String buttonsSelected() {
         return  selectedRBs.get(0).isSelected() + ", " + selectedRBs.get(1).isSelected();
     }
-    
+       
+    /*
+    * This function deals with creating the radio buttons for each experiment and
+    * their samples. It ensures that only two samples from the same experiment can
+    * be compared.
+    */
     private void fillRadioButton() {
+        
+        // loop through each experiment
         for(int i = 1; i <= experiments; i++)
         {
+            radioButtons.add(new ArrayList<RadioButton>()); // allocate space for a list of buttons
+            
+            RadioButton expBtn = new RadioButton(); // expBtn is for selecting an experiment
+            expBtn.setText("Exp. " + i); // abbreviated experiment so double digit numbers are visible
+            expBtn.setAlignment(Pos.CENTER); // centers text
+            experimentButtons.add(expBtn); // add the button to a list of radio buttons
+            gridPane.add(expBtn, 0, i);
+            GridPane.setMargin(expBtn, new Insets(10));
+
+            // loop through each sample in experiment i
             for(int j = 1; j <=getLargestSampleCountForOneExperiment(i); j++)
             {
                 //curSample = j;
-
-
-                RadioButton btn = new RadioButton();
+                RadioButton btn = new RadioButton(); // btn is for selecting a sample
+                btn.setDisable(true); // buttons should only be enabled when corresponding experiment button is selected
                 btn.setText(sampleNames[j - 1]); //TODO***********************************************
                 btn.setAlignment(Pos.CENTER);
+                       
+                // call this function when a sample radio button is clicked on
                 btn.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
                         if(btn.isSelected()){
-                            if(selectedRBs.size()<2)
+                            
+                            // if 1 or no sample buttons are already selected, evaluates to true
+                            if(selectedRBs.size() < 2)
                             {
-                                    selectedRBs.add(btn);
-                                    System.out.println(buttonsSelected()); // test method
+                                    selectedRBs.add(btn); // add to list
                                     //int row = gridPane.getRowIndex(btn);
                                     //int col = gridPane.getColumnIndex(btn);
                                     //choosenSamples.add(new ArrayList<Integer>(Arrays.asList(row,col)));
                                 }
+                            // if two sample buttons are already selected, must deselect last added button
                             else
                             {
                                 selectedRBs.get(0).setSelected(false); // set the 1st element unselected
                                 selectedRBs.remove(0); // remove 1st element from the selected list
                                 //choosenSamples.remove(0);
-                                selectedRBs.add(btn);
-                                System.out.println(buttonsSelected()); // test method
-                               // System.out.println("No more than two buttons! ");
+                                selectedRBs.add(btn); // add newly selected button
                             }
                             
-                            if(selectedRBs.size() == 2 && radioButtonsSelected())
+                            // perform calculations if two sample buttons are selected
+                            if(selectedRBs.size() == 2 /*&& radioButtonsSelected()*/)
                                 {
                                     defaultCutOffValue = Double.parseDouble(cutOffValueBox.getText());
                                     showFoldChange(defaultCutOffValue);
                                 }
                         }
+                        
+                        // in case button has been deselected, we want to remove it from the list
                         else {
-                            // in case button has been deselected, we want to remove it from the list
-                            
                             selectedRBs.remove(btn); // returns false if the button wasn't in the list to begin with
                         }
                     }
-
-
                 });
-                radioButtons.add(btn);
+                
+                radioButtons.get(i-1).add(btn); // adds sample button to 2D arraylist
                 gridPane.add(btn, j, i);
                 GridPane.setMargin(btn, new Insets(10));
             }
+            
+            // calls this function when an experiment button is clicked on 
+            expBtn.setOnAction(new EventHandler<ActionEvent>() {
+                public void handle(ActionEvent event) {
+                    if(expBtn.isSelected()) {
+                        
+                        // add an experiment button if none have been selected yet
+                        if(selectedEBs.isEmpty()) {
+                            selectedEBs.add(expBtn);
+                            System.out.println("List wass 0");
+                        }
+                        
+                        // unselect previously selected experiment button and select newly clicked on button
+                        else {
+                            selectedEBs.get(0).setSelected(false); // unselect the first element
+                            selectedEBs.remove(0); // remove 1st element from the selected list
+                            selectedEBs.add(expBtn);
+                            System.out.println("List wass 1");
+                        }
+                    }
+                    else {
+                        selectedEBs.remove(expBtn);
+                    }
+                    /*
+                    * loop through each experiment button and disable corresponding sample buttons,
+                    * only if that experiment button is not currently selected. Otherwise, we enable
+                    * the button.
+                    */
+                    for(int i = 0; i < experiments; i++) {
+                        
+                        // if an experiment button is selected, we would enable corresponding sample buttons
+                        if(experimentButtons.get(i).isSelected()) {
+                            enableAllButtons(i); // helper method for enabling sample buttons
+                        }
+                        else {
+                            disableAllButtons(i); // helper method for disabling sample buttons
+                        }
+                    }
+                }
+            });
         }
     }
 
+    /*
+    * precondition: radioButtons arraylist is already filled
+    * disables all sample radio buttons for given row,
+    * the row represents the samples under a given experiment.
+    */
+    private void disableAllButtons(int row) {
+        for(int i = 0; i < radioButtons.get(row).size(); i++) {
+            radioButtons.get(row).get(i).setDisable(true);
+            radioButtons.get(row).get(i).setSelected(false);
+            selectedRBs.remove(radioButtons.get(row).get(i));
+        }
+    }
+    
+    /*
+    * precondition: radioButtons arraylist is already filled
+    * enables all sample radio buttons for given row,
+    * the row represents the samples under a given experiment.
+    */
+    private void enableAllButtons(int row) {
+        for(int i = 0; i < radioButtons.get(row).size(); i++) {
+            radioButtons.get(row).get(i).setDisable(false);
+            radioButtons.get(row).get(i).setSelected(false);
+        }
+    }
 
     private int getLargestSampleCountForOneExperiment(int i ) {
         int res = 0;
