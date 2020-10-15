@@ -246,7 +246,6 @@ public class FoldChangeController implements Initializable {
                         // add an experiment button if none have been selected yet
                         if(selectedEBs.isEmpty()) {
                             selectedEBs.add(expBtn);
-                            System.out.println("List wass 0");
                         }
                         
                         // unselect previously selected experiment button and select newly clicked on button
@@ -254,7 +253,6 @@ public class FoldChangeController implements Initializable {
                             selectedEBs.get(0).setSelected(false); // unselect the first element
                             selectedEBs.remove(0); // remove 1st element from the selected list
                             selectedEBs.add(expBtn);
-                            System.out.println("List wass 1");
                         }
                     }
                     else {
