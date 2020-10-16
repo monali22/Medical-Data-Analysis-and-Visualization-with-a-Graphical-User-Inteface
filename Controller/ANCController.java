@@ -38,41 +38,54 @@ import java.util.*;
  * @author feiping
  */
 public class ANCController implements Initializable {
-     @FXML
-    private GridPane gridPane;
     @FXML
     private ScrollPane spForSamples;
     @FXML
     private GridPane gpForSamples;
+    
+    @FXML
+    private ArrayList<ScrollPane> listOfScroll;
+    
+    // Amman: 'commented out hardcoding'
+    /*
     @FXML
     private ScrollPane spForANC;
     @FXML
     private ScrollPane spForANC2;
     @FXML
     private ScrollPane spForANC3;
+    */
     
-    
+    // Amman: 'commented out hardcoding'
+    /*
     @FXML
     private GridPane gpForANC;
     @FXML
     private GridPane gpForANC2;
     @FXML
     private GridPane gpForANC3;
+    */
     
+    @FXML
     private ArrayList<GridPane> listOfGrid;
     
     @FXML
     private TabPane beadPlatesTab;
     
+    @FXML
     List<Tab> HitsTab = new ArrayList<>(); // list for tabs 
-
+    
+    // Amman: 'commented out hardcoding'
+    /*
     @FXML
     private Tab beadPlate1Tab;
     @FXML
     private Tab beadPlate2Tab;
     @FXML
     private Tab beadPlate3Tab;
+    */
     
+    int numTabs = 1;
     int largestSamples = 0;
     int experiments = 0;
     private  HashMap<Integer, List<Integer>> mapOfSamplesNumbers = new HashMap<>();
@@ -141,7 +154,7 @@ public class ANCController implements Initializable {
         mapOfSamplesNumbers = ModelForExperiments.getInstance().getMapOfSamplesNumbers();
         analytes = ModelForExperiments.getInstance().getAnalytes();
         sampleNames = ModelForExperiments.getInstance().getSampleNames();
-
+        
         ProbeNums = new double[experiments];
         IPProbesNums = new double[experiments];
         
@@ -150,10 +163,29 @@ public class ANCController implements Initializable {
         tableCol(largestSamples);
         //calcaluateANCMatrix();
         fillRadioButton();
+        
+        // loop through each fraction of the experiments (ex. n-1/n, n-2/n, n-3/n,...)
+        for(int i = experiments-1; i > 0; i--) {
+            if((i / experiments) >= 0.70) {
+                numTabs++; // we want a tab each time the fraction is greater or equal to 0.70
+            }
+            else {
+                break; // exit loop if fraction is less than 0.70
+            }
+        }
+        
+        listOfScroll = new ArrayList();
+        for(int i = 0; i < numTabs; i++) {
+            listOfScroll.add(new ScrollPane()); // allocate space for new scrollpane at index i of arraylist
+            listOfScroll.get(i).setContent(new GridPane());
+        }
+        
         spForSamples.setContent(gpForSamples); // add scroll bars to the grid pane. 
-        spForANC.setContent(gpForANC);
-        spForANC2.setContent(gpForANC2);
-        spForANC3.setContent(gpForANC3);
+        
+        // Amman: 'commented out hardcoding'
+        //spForANC.setContent(gpForANC);
+        //spForANC2.setContent(gpForANC2);
+        //spForANC3.setContent(gpForANC3);
 
         IPPHits = new ArrayList<String>();
         PValueCellHits = new ArrayList<ArrayList<double[]>>();
@@ -167,15 +199,24 @@ public class ANCController implements Initializable {
             //beadPlateLayouts.add(beadPlate1Layout);
             //beadPlateLayouts.add(beadPlate2Layout);
             //beadPlateLayouts.add(beadPlate3Layout);
-            HitsTab.add(beadPlate1Tab);
-            HitsTab.add(beadPlate2Tab);       
-            HitsTab.add(beadPlate3Tab); 
+            
+            // Amman: 'commented out hardcoding'
+            //HitsTab.add(beadPlate1Tab);
+            //HitsTab.add(beadPlate2Tab);       
+            //HitsTab.add(beadPlate3Tab); 
+            
             //gpForANC = new GridPane();
             //gpForANC2 = new GridPane();
             //gpForANC3 = new GridPane();
-            listOfGrid.add(gpForANC);
-            listOfGrid.add(gpForANC2);
-            listOfGrid.add(gpForANC3);
+            
+            for(int i = 0; i < numTabs; i++) {
+                listOfGrid.add((GridPane)listOfScroll.get(i).getContent()); // cast Node object to GridPane object
+                HitsTab.add(new Tab());
+            }
+            // Amman: 'commented out hardcoding'
+            //listOfGrid.add(gpForANC);
+            //listOfGrid.add(gpForANC2);
+            //listOfGrid.add(gpForANC3);
         }
         /*
         // display right content and remove previous slection of radio button. 
@@ -353,6 +394,7 @@ public class ANCController implements Initializable {
     private void changeTabEvent(Event event) throws IOException {
         int selectedTab = 0;
         
+        /*
         if(beadPlate1Tab.isSelected()){
             //selectedTab =1;
             displayHitsToScreen(1);
@@ -363,7 +405,14 @@ public class ANCController implements Initializable {
             //selectedTab =3;
             displayHitsToScreen(3);
         }
-
+        */
+        
+        for(int i = 0; i < numTabs; i++) {
+            if(HitsTab.get(i).isSelected()) {
+                displayHitsToScreen(i+1); // add one in parameter to stay consistent with displayHitsToScreen()'s coding
+                break;
+            }
+        }
     }
     
     
@@ -419,148 +468,8 @@ public class ANCController implements Initializable {
         }
 
     }
-    
-    @FXML
-    private Text testText; 
-    private void showANC() throws IOException {
-        //ArrayList<String> IPPHits;
-        //ArrayList<ArrayList<double[]>> PValueCellHits;
-        //ArrayList<ArrayList<double[]>> FCValueCellHits;
-        //ArrayList<ArrayList<Integer>> agreeCellHits;
-        Label label  = new Label();
-        label.autosize();  
-        label.resize(label.getWidth()+ 100, label.getHeight());
-        label.setText("PPI"); 
-        gpForANC.add(label,0,0);
-       int sizeOfColumns = experiments*2 +2;
-        int pos = 0; // for put plate 1/2 at the right position. 
-        if(!IPPHits.isEmpty()){
-            HashMap<Integer, ArrayList<String>> data = new HashMap<Integer, ArrayList<String>>();
-            
-            //Integer pointerIndex = 1;
-            
-            for(int num = 0; num <agreeCellHits.size()-1; num ++){ 
-            //pointerIndex++;
-                for(int ind = 0; ind < agreeCellHits.get(num).size(); ind++){
-                    ArrayList<String> IP = new ArrayList<String>();
-                    int key = agreeCellHits.get(num).get(ind);
-                    IP.add(IPPHits.get(key));
-                    for(int i= 0; i < PValueCellHits.size();i++){
-                        IP.add(PValueCellHits.get(i).get(0)[key] + "");
-                    }
-                    for(int k = 0; k < FCValueCellHits.size(); k++ ){
-                            IP.add(FCValueCellHits.get(k).get(0)[key] + "");
-                    }
-                    //IP.add(numUnions+ "");
-                    data.put(num, IP);
-                    //pointerIndex++;
-                }
-            //numUnions++;
-        }
-       
-            for(int i = 0; i < data.size(); i++)
-            {
-                //set width for cells of the cols
-                //ColumnConstraints column = new ColumnConstraints(1);
-                //gpForANC.getColumnConstraints().add(column);                
-                /*
-                Label label = new Label();
-                    String s = "Plate " + i;
-                    label.setText(s);   
-                    label.autosize();         
-                    //add them to the GridPane
-                    gpForANC.add(label,pos,0);
-                */
-                //ObservableList<probeTableData> probes = ModelForExperiments.getInstance().getProbeListForPopulate(curExperiment, i);
-                for(int j = 0 ; j < data.get(i).size();j++)
-                {
-
-                    // testText = new Text();
-                    //gpForANC.getColumnConstraints().add(column);    
-                    Label label1  = new Label();
-                    //s = probes.get(j).getProbeForPlate(); // get probe's name (analyte)
-                    
-                    label1.autosize();  
-                    label1.resize(label1.getWidth()+ 100, label1.getHeight());
-                    double width = label1.getWidth();
-                    label1.setText(data.get(i).get(j)); 
-                    gpForANC.add(label1,i,j); //add them to the GridPane
-                   // pos++;                
-                    //showMedianValueDataInPlace(i,j,probes,medianValueOriginalData); 
-                    //getOneProbeDataForMedianValue(int experimentPos, int plateIndex,  int sampleIndex, int probeIndex)
-                   // HashMap<Integer, Double> ANCForOneProbe  =  ModelForExperiments.getInstance().getOneProbeDataForANC(curExperiment , i-1, curSample-1 , j);
-                    //displayHits(i, j, ANCForOneProbe);
-                }            
-            }    
-        }
-        /*
-        // clear previous data if any 
-        gpForANC.getChildren().clear();
-       // platesGridPane.gridLinesVisibleProperty().set(true);
-
-       // display sample name on the top of the table
-      UserInputForBeadPlate input = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(curExperiment).get(0); // get the user input for 1st plate
-      String[] names = input.getNames();
-      sampleName.setText(names[curSample -1]); // show sample name for the median value table        
-        //diaply analyte information on the 1st colomn
-        analytes = ModelForExperiments.getInstance().getAnalytes();
-        
-        for(int i = 1; i <= analytes.size();i++)
-        {
-            //set width for cells of the cols
-            ColumnConstraints column = new ColumnConstraints(70);
-            gpForANC.getColumnConstraints().add(column);            
-            Label label = new Label();
-            String s = analytes.get(i-1).getAnalyte() + "(" + analytes.get(i-1).getRegionNumber() + ")";
-            label.setText(s);    
-            label.autosize();
-            gpForANC.add(label,0,i+1);
-        }
-        
-
-    //display plate information on the 1st row & probes infor on the 2nd row
-        HashMap<Integer, ObservableList<probeTableData>> probesListForCurExperiment = ModelForExperiments.getInstance().getProbeMapForPopulate().get(curExperiment); 
-        int countsOfPlates = probesListForCurExperiment.size() -1; // initilize probelistForCurexperiment contains key=0 value, which is never used and is empty
-        // display probes 
-        int pos = 1; // for put plate 1/2 at the right position. 
-        for(int i = 1; i <= countsOfPlates; i++)
-        {
-            //set width for cells of the cols
-            ColumnConstraints column = new ColumnConstraints(70);
-            gpForANC.getColumnConstraints().add(column);                
-            Label label = new Label();
-            String s = "Plate " + i;
-            label.setText(s);   
-            label.autosize();         
-            //add them to the GridPane
-            gpForANC.add(label,pos,0);
-         
-            ObservableList<probeTableData> probes = ModelForExperiments.getInstance().getProbeListForPopulate(curExperiment, i);
-            for(int j = 0 ; j < probes.size();j++)
-            {
-
-                gpForANC.getColumnConstraints().add(column);    
-                Label label1  = new Label();
-                s = probes.get(j).getProbeForPlate(); // get probe's name (analyte)
-                label1.setText(s);    
-                label1.autosize();                          
-                gpForANC.add(label1,pos,1); //add them to the GridPane
-                pos++;                
-                //showMedianValueDataInPlace(i,j,probes,medianValueOriginalData); 
-                //getOneProbeDataForMedianValue(int experimentPos, int plateIndex,  int sampleIndex, int probeIndex)
-                HashMap<Integer, Double> ANCForOneProbe  =  ModelForExperiments.getInstance().getOneProbeDataForANC(curExperiment , i-1, curSample-1 , j);
-                displayANCforOneProbe(i, j, ANCForOneProbe);
-            }            
-        }    
-        */
-    }
 
     private void calcaluateANCMatrix() throws IOException {
-        curExperiment = gridPane.getRowIndex(slectedRBs.get(0));
-        curSample = gridPane.getColumnIndex(slectedRBs.get(0)) -1;
-        int experimementPos2 = gridPane.getRowIndex(slectedRBs.get(1));
-        int sampleIndex2 = gridPane.getColumnIndex(slectedRBs.get(1)) -1;
-        
         
        //TO DO this is where the experiment and samples are hard coded  
        int[] c1 = {2,0};
@@ -753,6 +662,7 @@ public class ANCController implements Initializable {
         GlobalHits(PValueCell, combinedFoldChange, FinalCutOffList);
    
     }
+    
     private void GlobalHits(ArrayList<ArrayList<HashMap<Integer, Double>>> PValueCell, HashMap<Integer,List<HashMap<Integer,Double>>> FCCell,  ArrayList<ArrayList<ArrayList<Double>>> PCutoffCell) throws IOException{
 
         //// hardcoded version
@@ -766,27 +676,8 @@ public class ANCController implements Initializable {
 //                                        {{8},{8,7},{8,7,6},{8,7,6,5},{8,7,6,5,4},{8,7,6,5,4,3}, {8,7,6,5,4,3,2},{8,7,6,5,4,3,2,1}}
 //                                        };
 
-        ///////////Vector version
-//        Vector<Vector<Vector<Double>>> perAgreeCell = new Vector(1);
-//        for(int i = 0; i < experiments; i++)
-//        {
-//            int tracer = i;
-//            Vector<Vector<Double>>element2 = new Vector(1);
-//            for(int j = 0; j<= i; j++)
-//            {
-//                Vector<Double>element3 = new Vector(1);
-//                for(int k = i; k >= 0 && k-tracer >= 0; k--)
-//                {
-//                    element3.add((double)(k+1));
-//                }
-//                tracer--;
-//                element2.add(element3);
-//            }
-//            perAgreeCell.add(element2);
-//        }
 
-        ///array version
-         ////// Creates a jagged 3D array matrix of descending numbers based on # of experiments
+         ////// Creates a jagged 3D array matrix of descending numbers based on # of experiments (example above)
         double[][][] perAgreeCell = new double[experiments][][];
 
         for(int i = 0; i < experiments; i++)
@@ -812,6 +703,7 @@ public class ANCController implements Initializable {
         System.out.println(FCCell.size());
         
     }
+    
     Map<Integer, List<LinkedList<Integer>>> powerset = new HashMap<>();
     
     private double[][] getPMatrix(ArrayList<ArrayList<HashMap<Integer, Double>>> PValueCell){
@@ -1729,17 +1621,18 @@ private void createALLSpreadSheet(ArrayList<String> IPP, ArrayList<ArrayList<dou
      */
     private void EmpAdjPValueList(int experiments, double MHpvalue,double NRepValues){
         //Binom Coeff Cell 
-//        double[][][] BCC =
-////                         {{{1,0,0},{0,0,1}},
-////                          {{2,0,0},{0,0,2},{1,1,0},{1,0,1},{0,1,1}},
-////                          {{3,0,0},{0,0,3},{2,1,0},{2,0,1},{0,1,2},{1,0,2},{1,2,0},{1,1,1},{0,2,1}},
-////                          {{4,0,0},{0,0,4},{3,1,0},{3,0,1},{0,1,3},{1,0,3},{2,2,0},{2,1,1},{2,0,2},{0,2,2},{1,1,2},{1,3,0},{1,2,1},{0,3,1}},
-////                          {{5,0,0},{0,0,5},{4,1,0},{4,0,1},{0,1,4},{1,0,4},{3,2,0},{3,1,1},{3,0,2},{0,2,3},{1,1,3},{2,0,3},{2,3,0},{2,2,1},{2,1,2},{1,2,2},{0,3,2},{1,4,0},{1,3,1},{0,4,1}},
-////                          {{6,0,0},{0,0,6},{5,1,0},{5,0,1},{0,1,5},{1,0,5},{4,2,0},{4,1,1},{4,0,2},{0,2,4},{1,1,4},{2,0,4},{3,3,0},{3,2,1},{3,1,2},{3,0,3},{0,3,3},{1,2,3},{2,1,3},{2,4,0},{2,3,1},{2,2,2},{0,4,2},{1,3,2},{1,5,0},{1,4,1},{0,5,1}},
-////                          {{7,0,0},{0,0,7},{6,1,0},{6,0,1},{0,1,6},{1,0,6},{5,2,0},{5,1,1},{5,0,2},{0,2,5},{1,1,5},{2,0,5},{4,3,0},{4,2,1},{4,1,2},{4,0,3},{0,3,4},{1,2,4},{2,1,4},{3,0,4},{3,4,0},{3,3,1},{3,2,2},{3,1,3},{0,4,3},{1,3,3},{2,2,3},{2,5,0},{2,4,1},{2,3,2},{0,5,2},{1,4,2},{1,6,0},{1,5,1},{0,6,1}},
-////                          {{8,0,0},{0,0,8},{7,1,0},{7,0,1},{0,1,7},{1,0,7},{6,2,0},{6,1,1},{6,0,2},{0,2,6},{1,1,6},{2,0,6},{5,3,0},{5,2,1},{5,1,2},{5,0,3},{0,3,5},{1,2,5},{2,1,5},{3,0,5},{4,4,0},{4,3,1},{4,2,2},{4,1,3},{4,0,4},{1,3,4},{2,2,4},{3,1,4},{3,5,0},{3,4,1},{3,3,2},{3,2,3},{0,5,3},{1,4,3},{2,6,0},{2,5,1},{2,4,2},{0,6,2},{1,5,2},{1,7,0},{1,6,1},{0,7,1}},
-////                          };
+        double[][][] BCC =
+                         {{{1,0,0},{0,0,1}},
+                          {{2,0,0},{0,0,2},{1,1,0},{1,0,1},{0,1,1}},
+                          {{3,0,0},{0,0,3},{2,1,0},{2,0,1},{0,1,2},{1,0,2},{1,2,0},{1,1,1},{0,2,1}},
+                          {{4,0,0},{0,0,4},{3,1,0},{3,0,1},{0,1,3},{1,0,3},{2,2,0},{2,1,1},{2,0,2},{0,2,2},{1,1,2},{1,3,0},{1,2,1},{0,3,1}},
+                          {{5,0,0},{0,0,5},{4,1,0},{4,0,1},{0,1,4},{1,0,4},{3,2,0},{3,1,1},{3,0,2},{0,2,3},{1,1,3},{2,0,3},{2,3,0},{2,2,1},{2,1,2},{1,2,2},{0,3,2},{1,4,0},{1,3,1},{0,4,1}},
+                          {{6,0,0},{0,0,6},{5,1,0},{5,0,1},{0,1,5},{1,0,5},{4,2,0},{4,1,1},{4,0,2},{0,2,4},{1,1,4},{2,0,4},{3,3,0},{3,2,1},{3,1,2},{3,0,3},{0,3,3},{1,2,3},{2,1,3},{2,4,0},{2,3,1},{2,2,2},{0,4,2},{1,3,2},{1,5,0},{1,4,1},{0,5,1}},
+                          {{7,0,0},{0,0,7},{6,1,0},{6,0,1},{0,1,6},{1,0,6},{5,2,0},{5,1,1},{5,0,2},{0,2,5},{1,1,5},{2,0,5},{4,3,0},{4,2,1},{4,1,2},{4,0,3},{0,3,4},{1,2,4},{2,1,4},{3,0,4},{3,4,0},{3,3,1},{3,2,2},{3,1,3},{0,4,3},{1,3,3},{2,2,3},{2,5,0},{2,4,1},{2,3,2},{0,5,2},{1,4,2},{1,6,0},{1,5,1},{0,6,1}},
+                          {{8,0,0},{0,0,8},{7,1,0},{7,0,1},{0,1,7},{1,0,7},{6,2,0},{6,1,1},{6,0,2},{0,2,6},{1,1,6},{2,0,6},{5,3,0},{5,2,1},{5,1,2},{5,0,3},{0,3,5},{1,2,5},{2,1,5},{3,0,5},{4,4,0},{4,3,1},{4,2,2},{4,1,3},{4,0,4},{1,3,4},{2,2,4},{3,1,4},{3,5,0},{3,4,1},{3,3,2},{3,2,3},{0,5,3},{1,4,3},{2,6,0},{2,5,1},{2,4,2},{0,6,2},{1,5,2},{1,7,0},{1,6,1},{0,7,1}},
+                          };
 
+        //uses bCCHelper and permute helper methods
         double[][][] binomCoeffCell = new double[experiments][][]; //replaces hardcode above
 
         for(int i = 0; i < experiments; i++)
@@ -1751,7 +1644,7 @@ private void createALLSpreadSheet(ArrayList<String> IPP, ArrayList<ArrayList<dou
         pOutValList = new ArrayList<ArrayList<ArrayList<Double>>>();
         //BinomPvalue Calulation 
         for(int i = 0; i < experiments; i++){
-            pOutValList.add(BinomPValue(binomCoeffCell[i],i+1, MHpvalue));
+            pOutValList.add(BinomPValue(BCC[i],i+1, MHpvalue));
        }
     }
 

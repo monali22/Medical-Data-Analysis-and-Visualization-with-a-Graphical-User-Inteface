@@ -51,12 +51,12 @@
                <children>
                    <TabPane fx:id="beadPlatesTab" layoutY="26.0" prefHeight="170.0" prefWidth="598.0"  tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0">
                                                    <tabs>
-                                  <Tab fx:id="beadPlate1Tab" onSelectionChanged="#changeTabEvent" text="4o4">
+                                  <Tab fx:id="HitsTab.get(0)" onSelectionChanged="#changeTabEvent" text="4o4">
                                     <content>
                                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="358.0" prefWidth="555.0">
-                                        <ScrollPane fx:id="spForANC" layoutY="26.0" prefHeight="170.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0">
+                                        <ScrollPane fx:id="listOfScroll.get(0)" layoutY="26.0" prefHeight="170.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0">
                                             <content>
-                                               <GridPane fx:id="gpForANC" gridLinesVisible="true">
+                                               <GridPane fx:id="listOfGrid.get(0)" gridLinesVisible="true">
                                                  <columnConstraints>
                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
@@ -72,12 +72,12 @@
                                       </AnchorPane>
                                     </content>
                                   </Tab>
-                                    <Tab fx:id="beadPlate2Tab" onSelectionChanged="#changeTabEvent" text="4o4U3o4">
+                                    <Tab fx:id="HitsTab.get(1)" onSelectionChanged="#changeTabEvent" text="4o4U3o4">
                                        <content>
                                           <AnchorPane fx:id="exp2AP" minHeight="0.0" minWidth="0.0" prefHeight="358.0" prefWidth="555.0">
-                                            <ScrollPane fx:id="spForANC2" layoutY="26.0" prefHeight="170.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0">
+                                            <ScrollPane fx:id="listOfScroll.get(1)" layoutY="26.0" prefHeight="170.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0">
                                             <content>
-                                               <GridPane fx:id="gpForANC2" gridLinesVisible="true">
+                                               <GridPane fx:id="listOfGrid.get(1)" gridLinesVisible="true">
                                                  <columnConstraints>
                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
@@ -93,12 +93,12 @@
                                           </AnchorPane>
                                        </content>
                                     </Tab>
-                                    <Tab fx:id="beadPlate3Tab" onSelectionChanged="#changeTabEvent" text="4o4U3o4U2o4">
+                                    <Tab fx:id="HitsTab.get(2)" onSelectionChanged="#changeTabEvent" text="4o4U3o4U2o4">
                                        <content>
                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="358.0" prefWidth="555.0">
-                                              <ScrollPane fx:id="spForANC3" layoutY="26.0" prefHeight="170.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0">
+                                              <ScrollPane fx:id="listOfScroll.get(2)" layoutY="26.0" prefHeight="170.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0">
                                             <content>
-                                               <GridPane fx:id="gpForANC3" gridLinesVisible="true">
+                                               <GridPane fx:id="listOfGrid.get(2)" gridLinesVisible="true">
                                                  <columnConstraints>
                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
