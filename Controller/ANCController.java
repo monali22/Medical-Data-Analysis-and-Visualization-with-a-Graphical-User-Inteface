@@ -22,6 +22,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
+import javafx.scene.input.MouseEvent;
 import javafx.util.Pair;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.solvers.BrentSolver;
@@ -32,6 +33,7 @@ import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import javafx.beans.value.ObservableValue;
 /**
  * FXML Controller class
  *
@@ -69,11 +71,16 @@ public class ANCController implements Initializable {
     @FXML
     private ArrayList<GridPane> listOfGrid;
     
+    /*
     @FXML
     private TabPane beadPlatesTab;
     
     @FXML
     List<Tab> HitsTab = new ArrayList<>(); // list for tabs 
+    */
+    
+    @FXML
+    private ChoiceBox<String> unionExperiments;
     
     // Amman: 'commented out hardcoding'
     /*
@@ -85,7 +92,7 @@ public class ANCController implements Initializable {
     private Tab beadPlate3Tab;
     */
     
-    int numTabs = 1;
+    private int numUnions = 1;
     int largestSamples = 0;
     int experiments = 0;
     private  HashMap<Integer, List<Integer>> mapOfSamplesNumbers = new HashMap<>();
@@ -166,22 +173,21 @@ public class ANCController implements Initializable {
         
         // loop through each fraction of the experiments (ex. n-1/n, n-2/n, n-3/n,...)
         for(int i = experiments-1; i > 0; i--) {
-            if((i / experiments) >= 0.70) {
-                numTabs++; // we want a tab each time the fraction is greater or equal to 0.70
+            if(((double)i / (double)experiments) >= 0.70) {
+                numUnions++; // we want a tab each time the fraction is greater or equal to 0.70
             }
             else {
                 break; // exit loop if fraction is less than 0.70
             }
         }
-        
-        listOfScroll = new ArrayList();
-        for(int i = 0; i < numTabs; i++) {
-            listOfScroll.add(new ScrollPane()); // allocate space for new scrollpane at index i of arraylist
-            listOfScroll.get(i).setContent(new GridPane());
-        }
+
+        // call functions that initialize our grid and scroll panes
+        initGridList(numUnions);
+        initScrollList(numUnions);
         
         spForSamples.setContent(gpForSamples); // add scroll bars to the grid pane. 
         
+        fillChoiceBox(numUnions); // fill dropdown with necessary items
         // Amman: 'commented out hardcoding'
         //spForANC.setContent(gpForANC);
         //spForANC2.setContent(gpForANC2);
@@ -191,33 +197,8 @@ public class ANCController implements Initializable {
         PValueCellHits = new ArrayList<ArrayList<double[]>>();
         FCValueCellHits = new ArrayList<ArrayList<double[]>>();
         agreeCellHits = new ArrayList<ArrayList<Integer>>();
-        listOfGrid = new ArrayList();
+        //listOfGrid = new ArrayList();
 
-        if(HitsTab.size()==0)
-        {
-            
-            //beadPlateLayouts.add(beadPlate1Layout);
-            //beadPlateLayouts.add(beadPlate2Layout);
-            //beadPlateLayouts.add(beadPlate3Layout);
-            
-            // Amman: 'commented out hardcoding'
-            //HitsTab.add(beadPlate1Tab);
-            //HitsTab.add(beadPlate2Tab);       
-            //HitsTab.add(beadPlate3Tab); 
-            
-            //gpForANC = new GridPane();
-            //gpForANC2 = new GridPane();
-            //gpForANC3 = new GridPane();
-            
-            for(int i = 0; i < numTabs; i++) {
-                listOfGrid.add((GridPane)listOfScroll.get(i).getContent()); // cast Node object to GridPane object
-                HitsTab.add(new Tab());
-            }
-            // Amman: 'commented out hardcoding'
-            //listOfGrid.add(gpForANC);
-            //listOfGrid.add(gpForANC2);
-            //listOfGrid.add(gpForANC3);
-        }
         /*
         // display right content and remove previous slection of radio button. 
         group.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
@@ -237,20 +218,65 @@ public class ANCController implements Initializable {
         */
         
     }    
-       //dynamically add rows for gridpane base on previous user input. 
-    public  GridPane tableRow(int rows){
-    for(int i=1; i<=rows; i++){
-        //set width for cells of the cols
-        ColumnConstraints column = new ColumnConstraints(100);
-        gpForSamples.getColumnConstraints().add(column);
-        Label label = new Label();
-        String s = "  Experiment " + i;
-        label.setText(s);    
-        //textField.setAlignment(Pos.CENTER);
-        label.autosize();
-        gpForSamples.add(label,0,i);
-     }
-    return gpForSamples;
+    
+    // initializes the list of gridpanes
+    private void initGridList(int numUnions) {
+        listOfGrid = new ArrayList<>(numUnions);
+        for(int i = 0; i < numUnions; i++) {
+                listOfGrid.add(new GridPane());
+        }
+    }
+    
+    // initializes the list of scroll panes used by each gridpane
+    private void initScrollList(int numUnions) {
+        listOfScroll = new ArrayList(numUnions);
+        for(int i = 0; i < numUnions; i++) {
+            listOfScroll.add(new ScrollPane()); // allocate space for new scrollpane at index i of arraylist
+            listOfScroll.get(i).setContent(listOfGrid.get(i));
+        }
+    }
+    
+    /*
+    * precondition: have experimements already selected.
+    * fills in dropdown with all experiment unions.
+    * i.e if 4 experiments, dropdown items are (4o4, 4o4U3o4).
+    */
+    private void fillChoiceBox(int numUnions) {
+        int curExp = experiments; // need experiment number when create strings in choice box, i.e. ("4o4U3o4")
+        String expItem = curExp + "o" + curExp; // first item in choice box is created
+        unionExperiments.getItems().add(expItem); // add first item to choice box
+        
+        // loop through number of unions that keeps ratio at .70 or greater
+        for(int i = 1; i < numUnions; i++) {
+            curExp--;
+            if(i == 1) {
+                // hard code the second item in choice box so user can identify pattern as they go down list
+                unionExperiments.getItems().add(expItem + "U" + curExp + "o" + experiments);
+            }
+            else {
+                // put ellipsis in string to indicate that string is too long to show on screen
+                unionExperiments.getItems().add(expItem + "U...U" + curExp + "o" + experiments);
+            }
+        }
+        
+        unionExperiments.setValue(expItem); // set first value to expItem
+        unionExperiments.getSelectionModel().selectedIndexProperty().addListener(this::itemChanged);
+    }
+    
+    //dynamically add rows for gridpane base on previous user input. 
+    public GridPane tableRow(int rows){
+        for(int i=1; i<=rows; i++){
+            //set width for cells of the cols
+            ColumnConstraints column = new ColumnConstraints(100);
+            gpForSamples.getColumnConstraints().add(column);
+            Label label = new Label();
+            String s = "  Experiment " + i;
+            label.setText(s);    
+            //textField.setAlignment(Pos.CENTER);
+            label.autosize();
+            gpForSamples.add(label,0,i);
+        }
+        return gpForSamples;
     }
 
      //dynamically add cols for gridpane base on previous user input. 
@@ -344,7 +370,7 @@ public class ANCController implements Initializable {
          HashMap<Integer, ArrayList<ArrayList<String>>> dataToDisplay = new HashMap<Integer, ArrayList<ArrayList<String>>>();
     @FXML
      private void calculateDataEvent(ActionEvent event) throws IOException {
-         calcaluateANCMatrix();
+         calculateANCMatrix();
          calculated = true;
          
          if(calculated == true){
@@ -388,11 +414,21 @@ public class ANCController implements Initializable {
          return res;       
     }  
     
-
+    public void itemChanged(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        ObservableList<String> items = unionExperiments.getItems();
+        String selectedItem = unionExperiments.getValue();
+        
+        // find index of selected item in choice box and pass index to displayHitsToScreen()
+        for(int i = 0; i < items.size(); i++) {
+            if(selectedItem == items.get(i)) {
+                displayHitsToScreen(i + 1);
+                break;
+            }
+        }
+    }   
     
-@FXML
-    private void changeTabEvent(Event event) throws IOException {
-        int selectedTab = 0;
+    @FXML
+    private void changeTabEvent(MouseEvent event) {
         
         /*
         if(beadPlate1Tab.isSelected()){
@@ -406,20 +442,14 @@ public class ANCController implements Initializable {
             displayHitsToScreen(3);
         }
         */
-        
-        for(int i = 0; i < numTabs; i++) {
-            if(HitsTab.get(i).isSelected()) {
-                displayHitsToScreen(i+1); // add one in parameter to stay consistent with displayHitsToScreen()'s coding
-                break;
-            }
-        }
+
     }
     
     
     
     //@FXML
     //private Text Text; 
-    private void displayHitsToScreen(int selectedTab) throws IOException {
+    private void displayHitsToScreen(int selectedTab) {
 
         if(!dataToDisplay.isEmpty()){
             Label labelPPI  = new Label();
@@ -469,7 +499,7 @@ public class ANCController implements Initializable {
 
     }
 
-    private void calcaluateANCMatrix() throws IOException {
+    private void calculateANCMatrix() throws IOException {
         
        //TO DO this is where the experiment and samples are hard coded  
        int[] c1 = {2,0};
