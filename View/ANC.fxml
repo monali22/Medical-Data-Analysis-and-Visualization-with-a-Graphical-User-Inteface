@@ -47,7 +47,21 @@
                
                                  <children>
                     <ChoiceBox fx:id="unionExperiments" layoutX="224.0" layoutY="2.0" onMouseClicked="#changeTabEvent" prefWidth="150.0" />
-
+                    <ScrollPane fx:id="scrollANC" layoutY="26.0" prefHeight="170.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0">
+                                            <content>
+                                               <GridPane fx:id="gridANC" gridLinesVisible="true">
+                                                 <columnConstraints>
+                                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
+                                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
+                                                 </columnConstraints>
+                                                 <rowConstraints>
+                                                   <RowConstraints minHeight="20.0" prefHeight="5.0" vgrow="SOMETIMES" />
+                                                   <RowConstraints minHeight="20.0" prefHeight="5.0" vgrow="SOMETIMES" />
+                                                   <RowConstraints minHeight="20.0" prefHeight="5.0" vgrow="SOMETIMES" />
+                                                 </rowConstraints>
+                                               </GridPane>
+                                            </content>
+                                        </ScrollPane>
                                     
                                     <Text layoutX="10.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ANC Value for sample" />
                   <Text fx:id="sampleName" fill="#0a23c6" layoutX="180.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />

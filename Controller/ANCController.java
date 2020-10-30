@@ -46,51 +46,13 @@ public class ANCController implements Initializable {
     private GridPane gpForSamples;
     
     @FXML
-    private ArrayList<ScrollPane> listOfScroll;
-    
-    // Amman: 'commented out hardcoding'
-    /*
-    @FXML
-    private ScrollPane spForANC;
-    @FXML
-    private ScrollPane spForANC2;
-    @FXML
-    private ScrollPane spForANC3;
-    */
-    
-    // Amman: 'commented out hardcoding'
-    /*
-    @FXML
-    private GridPane gpForANC;
-    @FXML
-    private GridPane gpForANC2;
-    @FXML
-    private GridPane gpForANC3;
-    */
+    private ScrollPane scrollANC;
     
     @FXML
-    private ArrayList<GridPane> listOfGrid;
-    
-    /*
-    @FXML
-    private TabPane beadPlatesTab;
-    
-    @FXML
-    List<Tab> HitsTab = new ArrayList<>(); // list for tabs 
-    */
+    private GridPane gridANC;
     
     @FXML
     private ChoiceBox<String> unionExperiments;
-    
-    // Amman: 'commented out hardcoding'
-    /*
-    @FXML
-    private Tab beadPlate1Tab;
-    @FXML
-    private Tab beadPlate2Tab;
-    @FXML
-    private Tab beadPlate3Tab;
-    */
     
     private int numUnions = 1;
     int largestSamples = 0;
@@ -182,8 +144,9 @@ public class ANCController implements Initializable {
         }
 
         // call functions that initialize our grid and scroll panes
-        initGridList(numUnions);
-        initScrollList(numUnions);
+        //initGridList();
+        //initScrollList();
+        scrollANC.setContent(gridANC);
         
         spForSamples.setContent(gpForSamples); // add scroll bars to the grid pane. 
         
@@ -218,23 +181,6 @@ public class ANCController implements Initializable {
         */
         
     }    
-    
-    // initializes the list of gridpanes
-    private void initGridList(int numUnions) {
-        listOfGrid = new ArrayList<>(numUnions);
-        for(int i = 0; i < numUnions; i++) {
-                listOfGrid.add(new GridPane());
-        }
-    }
-    
-    // initializes the list of scroll panes used by each gridpane
-    private void initScrollList(int numUnions) {
-        listOfScroll = new ArrayList(numUnions);
-        for(int i = 0; i < numUnions; i++) {
-            listOfScroll.add(new ScrollPane()); // allocate space for new scrollpane at index i of arraylist
-            listOfScroll.get(i).setContent(listOfGrid.get(i));
-        }
-    }
     
     /*
     * precondition: have experimements already selected.
@@ -402,8 +348,16 @@ public class ANCController implements Initializable {
 
             }
         }
-         displayHitsToScreen(1);
+        
+        // check that we don't try to read from uninitialized 
+        try {
+            displayHitsToScreen(getIndexOfChoiceBox());
+        } 
+        catch(IndexOutOfBoundsException e) {
+            System.out.println(e.getMessage());
+        }
      }
+     
     private int getLargestSampleCountForOneExperiment(int i ) {
         int res = 0;
         //initilizeMapOfSample(); 
@@ -414,17 +368,28 @@ public class ANCController implements Initializable {
          return res;       
     }  
     
-    public void itemChanged(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+    /*
+    * precondition: have global variable unionExperiments 
+    * already initialized.
+    * returns the index of the currently selected value in the choicebox,
+    * assumes that first index is 1, not 0 like typical array syntax.
+    */
+    private int getIndexOfChoiceBox() {
         ObservableList<String> items = unionExperiments.getItems();
         String selectedItem = unionExperiments.getValue();
-        
         // find index of selected item in choice box and pass index to displayHitsToScreen()
         for(int i = 0; i < items.size(); i++) {
-            if(selectedItem == items.get(i)) {
-                displayHitsToScreen(i + 1);
-                break;
+            if(selectedItem.equals(items.get(i))) {
+                return i + 1; // add 1 as we don't use the array syntax where first index is 0
             }
         }
+        
+        // we should never reach this point in the method
+        throw new IndexOutOfBoundsException("unionExperiments list is empty or not initialized.");
+    }
+    
+    public void itemChanged(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        displayHitsToScreen((int)newValue + 1);
     }   
     
     @FXML
@@ -442,10 +407,8 @@ public class ANCController implements Initializable {
             displayHitsToScreen(3);
         }
         */
-
+        
     }
-    
-    
     
     //@FXML
     //private Text Text; 
@@ -461,9 +424,10 @@ public class ANCController implements Initializable {
         labelPPI.setText(" PPI"); 
         labelPV.setText(" P-value"); 
         labelFC.setText(" Fold Change"); 
-        listOfGrid.get(selectedTab-1).add(labelPPI,0,0); 
-        listOfGrid.get(selectedTab-1).add(labelPV,1,0);
-        listOfGrid.get(selectedTab-1).add(labelFC,5,0);
+        gridANC.getChildren().retainAll(gridANC.getChildren().get(0)); // clears grid
+        gridANC.add(labelPPI,0,0); 
+        gridANC.add(labelPV,1,0);
+        gridANC.add(labelFC,5,0);
 
             for(int i = 0; i < dataToDisplay.get(selectedTab - 1).size(); i++)
             {
@@ -489,7 +453,7 @@ public class ANCController implements Initializable {
                         dataToScreen = dataToScreen.substring(0, 7);
                     }
                     label1.setText(" " + dataToScreen);// dataToDisplay.get(selectedTab - 1).get(i).get(j)); 
-                    listOfGrid.get(selectedTab-1).add(label1,j,i+1); 
+                    gridANC.add(label1,j,i+1); 
                     //gpForANC.add(label1,j,i); 
                 }            
             }    
@@ -730,7 +694,7 @@ public class ANCController implements Initializable {
 
 
         singlehit(PValueCell,FCCell,PCutoffCell,perAgreeCell);
-        System.out.println(FCCell.size());
+        //System.out.println(FCCell.size());
         
     }
     
@@ -2576,22 +2540,24 @@ private HashMap<Integer, Double>  CombinePValue(HashMap<Integer, List<Double>> s
             ArrayList<HashMap<Integer, List<Double>>> ComboData2= new ArrayList<HashMap<Integer, List<Double>>>();
             for(int i = 0; i < ListOriComboData.get(e).size();i++)
             {
-               if(e ==  0){
+               switch(e) {
+                   case 0:
+                       if(plate <= plateSize){
+                        if(sample <=conditionSize ) {
+                             ComboData1.add(ListOriComboData.get(e).get(i));
+                              //System.out.println("index " + i + " sample " + sample + " " +ListOriComboData.get(e).get(i).get(12).size() +" "+ ListOriComboData.get(e).get(i).get(8).size() + " " +ListOriComboData.get(e).get(i).get(13).size() +" "+ ListOriComboData.get(e).get(i).get(26).size() + " "+ ListOriComboData.get(e).get(i).get(28).size() +" "+ ListOriComboData.get(e).get(i).get(77).size() +" "+ListOriComboData.get(e).get(i).get(43).size() +" "+ ListOriComboData.get(e).get(i).get(30).size() +" "+ListOriComboData.get(e).get(i).get(15).size() +" "+ ListOriComboData.get(e).get(i).get(64).size() +" "+ListOriComboData.get(e).get(i).get(68).size() +" "+ ListOriComboData.get(e).get(i).get(85).size() +" "+ListOriComboData.get(e).get(i).get(45).size() +" "+ ListOriComboData.get(e).get(i).get(89).size() +" "+ListOriComboData.get(e).get(i).get(91).size() +" "+ ListOriComboData.get(e).get(i).get(47).size() +" "+ListOriComboData.get(e).get(i).get(96).size());
+                            }
+                        }
+                        else {
+                        if(sample <=conditionSize ) {
+                             ComboData2.add(ListOriComboData.get(e).get(i));
+                            }
+                        }
+                    break;
+                   
+                   case 1:
                     if(plate <= plateSize){
                         if(sample <=conditionSize ){
-                             ComboData1.add(ListOriComboData.get(e).get(i));
-                              //System.out.println("index " + i + " sample " + sample + " " +ListOriComboData.get(e).get(i).get(12).size() +" "+ ListOriComboData.get(e).get(i).get(8).size() + " " +ListOriComboData.get(e).get(i).get(13).size() +" "+ ListOriComboData.get(e).get(i).get(26).size() + " "+ ListOriComboData.get(e).get(i).get(28).size() +" "+ ListOriComboData.get(e).get(i).get(77).size() +" "+ListOriComboData.get(e).get(i).get(43).size() +" "+ ListOriComboData.get(e).get(i).get(30).size() +" "+ListOriComboData.get(e).get(i).get(15).size() +" "+ ListOriComboData.get(e).get(i).get(64).size() +" "+ListOriComboData.get(e).get(i).get(68).size() +" "+ ListOriComboData.get(e).get(i).get(85).size() +" "+ListOriComboData.get(e).get(i).get(45).size() +" "+ ListOriComboData.get(e).get(i).get(89).size() +" "+ListOriComboData.get(e).get(i).get(91).size() +" "+ ListOriComboData.get(e).get(i).get(47).size() +" "+ListOriComboData.get(e).get(i).get(96).size());
-                        }
-                    }
-                    else{
-                        if(sample <=conditionSize ){
-                             ComboData2.add(ListOriComboData.get(e).get(i));
-                        }
-                    }
-               }
-               else if(e == 1){
-                   if(plate <= plateSize){
-                        if(sample <=conditionSize ){
                              ComboData2.add(ListOriComboData.get(e).get(i));
                         }
                     }
@@ -2599,9 +2565,11 @@ private HashMap<Integer, Double>  CombinePValue(HashMap<Integer, List<Double>> s
                         if(sample <=conditionSize ){
                              ComboData1.add(ListOriComboData.get(e).get(i));
                         }
-                    }
-               }else if( e == 2){
-                  if(plate <= plateSize){
+                    }  
+                    break;
+                   
+                   case 2:
+                    if(plate <= plateSize){
                         if(sample > conditionSize ){
                              ComboData1.add(ListOriComboData.get(e).get(i));
                               //System.out.println("index " + i + " sample " + sample + " " +ListOriComboData.get(e).get(i).get(12).size() +" "+ ListOriComboData.get(e).get(i).get(8).size() + " " +ListOriComboData.get(e).get(i).get(13).size() +" "+ ListOriComboData.get(e).get(i).get(26).size() + " "+ ListOriComboData.get(e).get(i).get(28).size() +" "+ ListOriComboData.get(e).get(i).get(77).size() +" "+ListOriComboData.get(e).get(i).get(43).size() +" "+ ListOriComboData.get(e).get(i).get(30).size() +" "+ListOriComboData.get(e).get(i).get(15).size() +" "+ ListOriComboData.get(e).get(i).get(64).size() +" "+ListOriComboData.get(e).get(i).get(68).size() +" "+ ListOriComboData.get(e).get(i).get(85).size() +" "+ListOriComboData.get(e).get(i).get(45).size() +" "+ ListOriComboData.get(e).get(i).get(89).size() +" "+ListOriComboData.get(e).get(i).get(91).size() +" "+ ListOriComboData.get(e).get(i).get(47).size() +" "+ListOriComboData.get(e).get(i).get(96).size());
@@ -2611,10 +2579,11 @@ private HashMap<Integer, Double>  CombinePValue(HashMap<Integer, List<Double>> s
                         if(sample > conditionSize ){
                              ComboData2.add(ListOriComboData.get(e).get(i));
                         }
-                    }
-               }else if( e == 3){
-                  
-                  if(plate <= plateSize){
+                    }   
+                    break;
+                   
+                   case 3:
+                    if(plate <= plateSize){
                         if(sample > conditionSize ){
                              ComboData2.add(ListOriComboData.get(e).get(i));
                               //System.out.println("index " + i + " sample " + sample + " " +ListOriComboData.get(e).get(i).get(12).size() +" "+ ListOriComboData.get(e).get(i).get(8).size() + " " +ListOriComboData.get(e).get(i).get(13).size() +" "+ ListOriComboData.get(e).get(i).get(26).size() + " "+ ListOriComboData.get(e).get(i).get(28).size() +" "+ ListOriComboData.get(e).get(i).get(77).size() +" "+ListOriComboData.get(e).get(i).get(43).size() +" "+ ListOriComboData.get(e).get(i).get(30).size() +" "+ListOriComboData.get(e).get(i).get(15).size() +" "+ ListOriComboData.get(e).get(i).get(64).size() +" "+ListOriComboData.get(e).get(i).get(68).size() +" "+ ListOriComboData.get(e).get(i).get(85).size() +" "+ListOriComboData.get(e).get(i).get(45).size() +" "+ ListOriComboData.get(e).get(i).get(89).size() +" "+ListOriComboData.get(e).get(i).get(91).size() +" "+ ListOriComboData.get(e).get(i).get(47).size() +" "+ListOriComboData.get(e).get(i).get(96).size());
@@ -2626,6 +2595,7 @@ private HashMap<Integer, Double>  CombinePValue(HashMap<Integer, List<Double>> s
                              //System.out.println(sample);
                         }
                     }
+                    break;
                }
 
                 plate++;

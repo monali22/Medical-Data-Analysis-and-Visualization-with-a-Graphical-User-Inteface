@@ -483,8 +483,14 @@ public class HomepageController implements Initializable {
         {
             ErrorMsg error = new ErrorMsg();
             error.showError("Files Invalid!");
-        }           
-        updateExperimentsInfo();
+        }  
+        
+        try {
+            updateExperimentsInfo();
+        }
+        catch(NullPointerException e) {
+            System.out.println("Haven't selected any files.");
+        }
     }
     
     //read analystes from the first xml file and save it to data model. 
@@ -857,7 +863,7 @@ public class HomepageController implements Initializable {
             
 
     //update left upper experiments info after user upload xml files or manually set up xml files for experiments
-    private void updateExperimentsInfo() {
+    private void updateExperimentsInfo() throws NullPointerException {
         //display # of experiements
         int count = ModelForExperiments.getInstance().getNumberOfExperiments();
         totalNumberOfExperiments.setText(Integer.toString(count));
@@ -866,6 +872,10 @@ public class HomepageController implements Initializable {
         ObservableList<Integer> experimentsNew = ModelForExperiments.getInstance().getExperiments();
         //experiments.clear();
         //experiments.addAll(experimentsNew);
+        if(experimentsNew == null) {
+            throw new NullPointerException("Haven't selected files.");
+        }
+        
         DropdownExperimentsChoiceBox.setItems(experimentsNew);
         
         int defaultExperiment = 1;
@@ -1620,13 +1630,3 @@ public class HomepageController implements Initializable {
 
  
 }
-
-
-
-
-
-
-
-
-
-

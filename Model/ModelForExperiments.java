@@ -280,7 +280,6 @@ public class ModelForExperiments {
             return null;
         }    
             return probesListForPopulate.get(experiement).get(beadPlate);
-
     }
     */
     
