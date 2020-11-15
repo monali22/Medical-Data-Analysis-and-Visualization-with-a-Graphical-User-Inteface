@@ -11,23 +11,25 @@ import java.sql.*;
  */
 public class BeadsModel {
     Connection conection;
-   public BeadsModel () {
-   conection = SqliteConnection.Connector();
-   if (conection == null) {
+    public BeadsModel () {
+        conection = SqliteConnection.Connector();
+        if (conection == null) {
 
-   System.out.println("connection not successful");
-    System.exit(1);}
-  }
+        System.out.println("connection not successful");
+        System.exit(1);
+        }
+    }
   
-  public boolean isDbConnected() {
-   try {
-  return !conection.isClosed();
- } catch (SQLException e) {
-  // TODO Auto-generated catch block
-  e.printStackTrace();
-  return false;
- }
-}
+    public boolean isDbConnected() {
+        try {
+            return !conection.isClosed();
+        } 
+        catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }
+   }
 }
 
 
