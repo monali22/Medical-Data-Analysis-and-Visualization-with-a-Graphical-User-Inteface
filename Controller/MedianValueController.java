@@ -5,6 +5,7 @@
  */
 package Controller;
 
+import Model.ModelForExperiments;
 import Model.UserInputForBeadPlate;
 import Model.bead;
 import Model.probeTableData;
@@ -89,7 +90,6 @@ public class MedianValueController implements Initializable {
         experiments = getInstance().getNumberOfExperiments();
         samples = getLargestSampleCountForAllExperiment();
 
-       
         analytes = getInstance().getAnalytes();
         calcaluateMedianValueMatrix();
         tableRow(experiments);    
@@ -99,7 +99,6 @@ public class MedianValueController implements Initializable {
         spForMedianValue.setContent(platesGridPane);
         //sp1.setFitToWidth(true);
         //gridPane.setHgrow(sp1, Priority.ALWAYS);
-
 
         // display right content and remove previous slection of radio button. 
         group.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
@@ -185,7 +184,7 @@ public class MedianValueController implements Initializable {
        // platesGridPane.gridLinesVisibleProperty().set(true);
         
        // display sample name on the top of the table
-      UserInputForBeadPlate input = getInstance().getUserInputsForBeadPlateMap().get(curExperiment).get(0); // get the user input for 1st plate
+      UserInputForBeadPlate input = getInstance().getUserInputsForBeadPlateMap().get(curExperiment).get(1); // get the user input for 1st plate
       String[] names = input.getNames();
         //String[] names = input.getNames();
       sampleName.setText(names[curSample -1]); // show sample name for the median value table
@@ -323,13 +322,15 @@ public class MedianValueController implements Initializable {
         //int temp = 0;
         for(int i = 0; i < analytes.size();i++)
         {
-            int regionNumber = analytes.get(i).getRegionNumber();       
+            int regionNumber = analytes.get(i).getRegionNumber();
+
             double sum = 0;
             //System.out.println("curEepriment is " + curExperiment + ". cur curSample is "  + curSample + ". cur RegionNumber is " + regionNumber);
             for(HashMap<Integer, Double> map : wellsForCalculate)
             {
                 //System.out.println(wellsForCalculate);;
                 //double data = map.get(regionNumber);
+
                 sum += map.get(regionNumber);
             }
             double finalMeidanValue = sum / wellsForCalculate.size();
@@ -389,19 +390,19 @@ public class MedianValueController implements Initializable {
     
     //find the col size for the table
     private int getLargestSampleCountForAllExperiment() {
-        HashMap<Integer, List<UserInputForBeadPlate>> userInputsForBeadPlateMap = getInstance().getUserInputsForBeadPlateMap();
+        HashMap<Integer, HashMap<Integer, UserInputForBeadPlate>> userInputsForBeadPlateMap = getInstance().getUserInputsForBeadPlateMap();
         int res = 0;
         int iIndex = 0;
         int jIndex =0;
         for(int i = 1; i <= userInputsForBeadPlateMap.size();i++)
         {
             List<Integer> samplesCountForOneExperiment = new ArrayList<>();
-             List<UserInputForBeadPlate> inputs =  userInputsForBeadPlateMap.get(i);
+             HashMap<Integer, UserInputForBeadPlate> inputs =  userInputsForBeadPlateMap.get(i);
             for(int j = 0; j < inputs.size();j++)
             {
-                UserInputForBeadPlate input = inputs.get(j);
-                int size = input.getNumOfSamples();
-                samplesCountForOneExperiment.add(input.getNumOfSamples());
+                UserInputForBeadPlate input = inputs.get(j + 1);
+                int size = ModelForExperiments.getInstance().getExperimentModel().get(ModelForExperiments.getInstance().getCurrentExperiment()).getSamples();
+                samplesCountForOneExperiment.add(ModelForExperiments.getInstance().getExperimentModel().get(ModelForExperiments.getInstance().getCurrentExperiment()).getSamples());
                 if(res < size)
                 {
                     iIndex =  i;
@@ -411,7 +412,7 @@ public class MedianValueController implements Initializable {
             }
             mapOfSamples.put(i, samplesCountForOneExperiment);
         }
-        samplesNames = userInputsForBeadPlateMap.get(iIndex).get(jIndex).getNames(); 
+        samplesNames = userInputsForBeadPlateMap.get(iIndex).get(jIndex + 1).getNames(); 
         getInstance().setLargestSampleCount(res);
         getInstance().setMapOfSamplesNumbers(mapOfSamples);
         return res;
@@ -469,11 +470,11 @@ public class MedianValueController implements Initializable {
         for(int i = 1; i <=experiments;i++)
         {
             List<HashMap<Integer, HashMap<Integer,  Double>>> medianValueOriginalData = getMeidanValueOriginalData(i);
-            HashMap<Integer, List<UserInputForBeadPlate>> test = getInstance().getUserInputsForBeadPlateMap();
+            HashMap<Integer, HashMap<Integer, UserInputForBeadPlate>> test = getInstance().getUserInputsForBeadPlateMap();
            //TODO: i is not correctly checked ; Check ModelForExperiments
             //First check status if availble (true or false) get or else result 
             HashMap<Integer, ObservableList<probeTableData>> probesListForCurExperiment = getInstance().getProbeMapForPopulate().get(i);
-            List<UserInputForBeadPlate> inputs =  getInstance().getUserInputsForBeadPlateMap().get(i);
+            HashMap<Integer, UserInputForBeadPlate> inputs =  getInstance().getUserInputsForBeadPlateMap().get(i);
   
             if(inputs.isEmpty())
             {
@@ -484,8 +485,8 @@ public class MedianValueController implements Initializable {
             //System.out.println("experiment is " + i ); // for debug
             for(int j = 0; j < numberOfPlates; j++)
             {
-                UserInputForBeadPlate input = inputs.get(j);
-                int numberOfSamples  = input.getNumOfSamples();
+                UserInputForBeadPlate input = inputs.get(j + 1);
+                int numberOfSamples  = ModelForExperiments.getInstance().getExperimentModel().get(i).getSamples();
                 ObservableList<probeTableData> ProbesForOnePlate = probesListForCurExperiment.get(j+1);
                 int numberOfProbes = input.getNumOfProbes();
                 //System.out.println("plate Index is " + j ); // for debug
@@ -515,7 +516,7 @@ public class MedianValueController implements Initializable {
             ObservableList<probeTableData> ProbesForOnePlate, List<HashMap<Integer, HashMap<Integer, Double>>> medianValueOriginalData, 
             UserInputForBeadPlate userInput) {
         HashMap<Integer, HashMap<Integer,  Double>> dataMap = medianValueOriginalData.get(plateIndex);
-        int numberOfSamples = userInput.getNumOfSamples();
+        int numberOfSamples = ModelForExperiments.getInstance().getExperimentModel().get(experimentPos).getSamples();
         getInstance().setNumberOfSamples(numberOfSamples);
         int numberOfReplicas = userInput.getNumOfReplicas();
         HashMap<Integer, Double> finalMedianValueForOneProbe  = new HashMap<>();// for  final median value data

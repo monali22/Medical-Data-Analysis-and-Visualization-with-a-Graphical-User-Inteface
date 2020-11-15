@@ -62,13 +62,13 @@ public class PopUpMedianValueController implements Initializable {
         sampleNames = ModelForExperiments.getInstance().getSampleNames();
        
         // calculate how many experiment contains that sample 
-        HashMap<Integer, List<UserInputForBeadPlate>> userInputsForBeadPlateMap = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap();
+        HashMap<Integer, HashMap<Integer, UserInputForBeadPlate>> userInputsForBeadPlateMap = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap();
         for( int i = 1; i <=numberOfExperiments; i++)
         {
-            List<UserInputForBeadPlate> inputList = userInputsForBeadPlateMap.get(i);
-            for(UserInputForBeadPlate input :userInputsForBeadPlateMap.get(i) )
+            HashMap<Integer, UserInputForBeadPlate> inputList = userInputsForBeadPlateMap.get(i);
+            for(/*UserInputForBeadPlate input :userInputsForBeadPlateMap.get(i)*/ int j = 0; j < userInputsForBeadPlateMap.get(i).size(); j++ )
             {
-                if(input.getNumOfSamples()>= curSamplePos)
+                if(ModelForExperiments.getInstance().getExperimentModel().get(i).getSamples() >= curSamplePos)
                 {
                     experimentsToShow.add( i );
                     break;

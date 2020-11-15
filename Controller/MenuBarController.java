@@ -26,7 +26,7 @@ import java.util.ResourceBundle;
  *
  * @author feiping
  */
-public class MenuBarController implements Initializable{
+public class MenuBarController implements Initializable {
 
     @FXML
     private Menu input;
@@ -48,119 +48,119 @@ public class MenuBarController implements Initializable{
     /**
      * Initializes the controller class.
      */
-   @Override
+    @Override
     public void initialize(URL url, ResourceBundle rb) {
-        //activing a menue like a menu item
+        //activing a menue like a menu item 
+        
         input.setGraphic(
-        ButtonBuilder.create()
-            .text("Input")
-            .onAction(new EventHandler<ActionEvent>(){
-                @Override public void handle(ActionEvent t) {
-                    switchToInput() ;
-             } 
-            })
-            .build()
+                ButtonBuilder.create()
+                        .text("Input")
+                        .onAction(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent t) {
+                                switchToInput();
+                            }
+                        })
+                        .build()
         );
         
         medianValue.setGraphic(
-        ButtonBuilder.create()
-            .text("Median Value")
-            .onAction(new EventHandler<ActionEvent>(){
-                @Override public void handle(ActionEvent t) {
-                    switchToMedianValue() ;
-             }
-            })
-            .build()
-        );        
-        
+                ButtonBuilder.create()
+                        .text("Median Value")
+                        .onAction(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent t) {
+                                switchToMedianValue();
+                            }
+                        })
+                        .build()
+        );
+
         FoldChange.setGraphic(
-        ButtonBuilder.create()
-            .text("Fold Change")
-            .onAction(new EventHandler<ActionEvent>(){
-                @Override public void handle(ActionEvent t) {
-                    switchToFoldChange() ;
-             } 
+                ButtonBuilder.create()
+                        .text("Fold Change")
+                        .onAction(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent t) {
+                                switchToFoldChange();
+                            }
 
+                        })
+                        .build()
+        );
 
-            })
-            .build()
-        );            
-        
         ANC.setGraphic(
-        ButtonBuilder.create()
-            .text("ANC")
-            .onAction(new EventHandler<ActionEvent>(){
-                @Override public void handle(ActionEvent t) {
-                    switchToANC() ;
-             } 
+                ButtonBuilder.create()
+                        .text("ANC")
+                        .onAction(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent t) {
+                                switchToANC();
+                            }
 
+                        })
+                        .build()
+        );
 
-            })
-            .build()
-        );             
-        
         CNA.setGraphic(
-        ButtonBuilder.create()
-            .text("CNA")
-            .onAction(new EventHandler<ActionEvent>(){
-                @Override public void handle(ActionEvent t) {
-                    switchToMedianValue() ;
-             } 
+                ButtonBuilder.create()
+                        .text("CNA")
+                        .onAction(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent t) {
+                                switchToMedianValue();
+                            }
 
-
-            })
-            .build()
-        );     
+                        })
+                        .build()
+        );
 
         PCA.setGraphic(
-        ButtonBuilder.create()
-            .text("PCA")
-            .onAction(new EventHandler<ActionEvent>(){
-                @Override public void handle(ActionEvent t) {
-                    switchToMedianValue() ;
-             } 
+                ButtonBuilder.create()
+                        .text("PCA")
+                        .onAction(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent t) {
+                                switchToMedianValue();
+                            }
 
-
-            })
-            .build()
-        );     
+                        })
+                        .build()
+        );
 
         NED.setGraphic(
-        ButtonBuilder.create()
-            .text("NED")
-            .onAction(new EventHandler<ActionEvent>(){
-                @Override public void handle(ActionEvent t) {
-                   switchToMedianValue() ;
-             } 
+                ButtonBuilder.create()
+                        .text("NED")
+                        .onAction(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent t) {
+                                switchToMedianValue();
+                            }
 
+                        })
+                        .build()
+        );
 
-            })
-            .build()
-        );     
-
-
-        
-    }    
+    }
 
     private void switchToInput() {
 
         try {
 
-        URL paneTwoUrl = getClass().getResource("/View/Homepage.fxml");
-        AnchorPane paneTwo = FXMLLoader.load( paneTwoUrl );
+            URL paneTwoUrl = getClass().getResource("/View/Homepage.fxml");
+            AnchorPane paneTwo = FXMLLoader.load(paneTwoUrl);
 
-        BorderPane border = Main.getRoot();
-        border.setCenter(paneTwo);
+            BorderPane border = Main.getRoot();
+            border.setCenter(paneTwo);
 
         } catch (IOException e) {
-          e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
     private void switchToMedianValue() {
         // when no experiments has been set up, median value has no data to show. 
-        if(ModelForExperiments.getInstance().getExperiments()==null || ModelForExperiments.getInstance().getExperiments().isEmpty())
-        {
+        if (ModelForExperiments.getInstance().getExperiments() == null || ModelForExperiments.getInstance().getExperiments().isEmpty()) {
             ErrorMsg error = new ErrorMsg();
             error.showError("Please set up experiments first!");
             return;
@@ -172,55 +172,52 @@ public class MenuBarController implements Initializable{
             error.showError("Please confirm all experiments first!");
             return;
         }
-                */
+         */
         try {
 
-        URL paneTwoUrl = getClass().getResource("/View/MedianValue.fxml");
-        AnchorPane paneTwo = FXMLLoader.load( paneTwoUrl );
+            URL paneTwoUrl = getClass().getResource("/View/MedianValue.fxml");
+            AnchorPane paneTwo = FXMLLoader.load(paneTwoUrl);
 
-        BorderPane border = Main.getRoot();
-        border.setCenter(paneTwo);
+            BorderPane border = Main.getRoot();
+            border.setCenter(paneTwo);
 
         } catch (IOException e) {
-          e.printStackTrace();
+            e.printStackTrace();
         }
     }
-    
-        private void switchToFoldChange() {
+
+    private void switchToFoldChange() {
 
         try {
 
-        URL paneTwoUrl = getClass().getResource("/View/FoldChange.fxml");
-        AnchorPane paneTwo = FXMLLoader.load( paneTwoUrl );
+            URL paneTwoUrl = getClass().getResource("/View/FoldChange.fxml");
+            AnchorPane paneTwo = FXMLLoader.load(paneTwoUrl);
 
-
-
-        BorderPane border = Main.getRoot();
-        border.setCenter(paneTwo);
+            BorderPane border = Main.getRoot();
+            border.setCenter(paneTwo);
 
         } catch (IOException e) {
-          e.printStackTrace();
+            e.printStackTrace();
         }
     }
-        
-        private void switchToANC() {
+
+    private void switchToANC() {
 
         try {
 
-        URL paneTwoUrl = getClass().getResource("/View/ANC.fxml");
-        AnchorPane paneTwo = FXMLLoader.load( paneTwoUrl );
+            URL paneTwoUrl = getClass().getResource("/View/ANC.fxml");
+            AnchorPane paneTwo = FXMLLoader.load(paneTwoUrl);
 
-        BorderPane border = Main.getRoot();
-        border.setCenter(paneTwo);
+            BorderPane border = Main.getRoot();
+            border.setCenter(paneTwo);
 
         } catch (IOException e) {
-          e.printStackTrace();
+            e.printStackTrace();
         }
-    }     
+    }
 
-    public String[] getSampleNames()
-    {
+    public String[] getSampleNames() {
         return samplesNames;
     }
-        
+
 }

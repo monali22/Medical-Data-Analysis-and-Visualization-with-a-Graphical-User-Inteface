@@ -131,7 +131,7 @@ public class SetUpExperimentsController implements Initializable {
         ModelForExperiments.getInstance().setExperiments(experiments);// put it into model for homepage display
         chooseExperimentChoiceBox.setItems(experiments); 
         
-        ModelForExperiments.getInstance().initilizeProbeListForPopulate();// update probe lists
+        ModelForExperiments.getInstance().initializeProbeListForPopulate();// update probe lists
 
         // if new number of experiment less than previous input, remove extra experiment data. 
         if(number < preNumberOfExperiment)

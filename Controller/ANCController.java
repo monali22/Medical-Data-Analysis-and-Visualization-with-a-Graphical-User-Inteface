@@ -488,14 +488,15 @@ public class ANCController implements Initializable {
             ArrayList<HashMap<Integer, List<Double>>> ComboData = new ArrayList<HashMap<Integer, List<Double>>>();;
             List< HashMap<Integer, HashMap<Integer,   List<Integer>>>> orignalDataForOneExperiment = orginalXMLData.get(i); 
             HashMap<Integer, ObservableList<probeTableData>> probesListForCurExperiment = ModelForExperiments.getInstance().getProbeMapForPopulate().get(i); 
-            List<UserInputForBeadPlate> inputs =  ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(i);
+            HashMap<Integer, UserInputForBeadPlate> inputs =  ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(i);
             int numberOfPlates = inputs.size();
             numSamples = numberOfPlates; 
             //System.out.println("experiment is " + i ); // for debug
-            for(int j = 0; j < numberOfPlates; j++)
+            for(int j = 1; j <= numberOfPlates; j++)
             {
                 UserInputForBeadPlate input = inputs.get(j);
-                int numberOfSamples  = input.getNumOfSamples();
+                //int numberOfSamples  = input.getNumOfSamples();
+                int numberOfSamples = ModelForExperiments.getInstance().getExperimentModel().get(i).getSamples();
                 ObservableList<probeTableData> ProbesForOnePlate = probesListForCurExperiment.get(j+1);
                 int numberOfProbes = input.getNumOfProbes();
                 ProbeNums[i-1] = ProbeNums[i-1] + numberOfProbes;
@@ -570,11 +571,12 @@ public class ANCController implements Initializable {
             ArrayList<ArrayList<Double>> repPvaluePerExp = new ArrayList<ArrayList<Double>> ();
             //List< HashMap<Integer, HashMap<Integer,   List<Integer>>>> orignalDataForOneExperiment = orginalXMLData.get(i); 
             HashMap<Integer, ObservableList<probeTableData>> probesListForCurExperiment = ModelForExperiments.getInstance().getProbeMapForPopulate().get(i); 
-            List<UserInputForBeadPlate> inputs =  ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(i);
+            HashMap<Integer, UserInputForBeadPlate> inputs =  ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(i);
             int numberOfPlates = inputs.size();
-            UserInputForBeadPlate input = inputs.get(0);//Used to get the first plate index this is hard coded witht he assumption that the plate number sizes does not change with experiments 
+            UserInputForBeadPlate input = inputs.get(1);//Used to get the first plate index this is hard coded witht he assumption that the plate number sizes does not change with experiments 
         
-            int numberOfSamples  = input.getNumOfSamples();
+            //int numberOfSamples  = input.getNumOfSamples();
+            int numberOfSamples = ModelForExperiments.getInstance().getExperimentModel().get(i).getSamples();
             for(int k = 0; k<numberOfSamples; k++ )
             {   
                      
@@ -1977,7 +1979,8 @@ private void createALLSpreadSheet(ArrayList<String> IPP, ArrayList<ArrayList<dou
         UserInputForBeadPlate userInput) {
          
       HashMap<Integer, HashMap<Integer,   List<Integer>>> dataForOnePlate = orignalDataForOneExperiment.get(plateIndex);
-        int numberOfSamples = userInput.getNumOfSamples();
+        //int numberOfSamples = userInput.getNumOfSamples();
+        int numberOfSamples = ModelForExperiments.getInstance().getExperimentModel().get(experimentPos).getSamples();
         int numberOfReplicas = userInput.getNumOfReplicas();
         
        // System.out.println("experiment pos is " + experimentPos + ". plateIndex is  " +plateIndex + ". sampleIndex is " +sampleIndex +". probeIndex is " +  probeIndex);
@@ -2006,7 +2009,7 @@ private void createALLSpreadSheet(ArrayList<String> IPP, ArrayList<ArrayList<dou
      }
      
      /**
-      * Combien the probes to calculate Pvalue
+      * Combine the probes to calculate P value
       * @param sampleData
       * @param replicaData
       * @return 
@@ -2036,7 +2039,8 @@ private void createALLSpreadSheet(ArrayList<String> IPP, ArrayList<ArrayList<dou
         ObservableList<probeTableData> ProbesForOnePlate,  List< HashMap<Integer, HashMap<Integer,   List<Integer>>>> orignalDataForOneExperiment, 
         UserInputForBeadPlate userInput) {
          HashMap<Integer, HashMap<Integer,   List<Integer>>> dataForOnePlate = orignalDataForOneExperiment.get(plateIndex);
-        int numberOfSamples = userInput.getNumOfSamples();
+        //int numberOfSamples = userInput.getNumOfSamples();
+        int numberOfSamples = ModelForExperiments.getInstance().getExperimentModel().get(experimentPos).getSamples();
         int numberOfReplicas = userInput.getNumOfReplicas();
         
        // System.out.println("experiment pos is " + experimentPos + ". plateIndex is  " +plateIndex + ". sampleIndex is " +sampleIndex +". probeIndex is " +  probeIndex);
@@ -2467,10 +2471,10 @@ private HashMap<Integer, Double>  CombinePValue(HashMap<Integer, List<Double>> s
      */
     private int getSmallestProbes(int experimementPos1, int experimementPos2, int plates)
     {
-         List<UserInputForBeadPlate> userInputs1 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos1);
-         List<UserInputForBeadPlate> userInputs2 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos2);
+         HashMap<Integer, UserInputForBeadPlate> userInputs1 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos1);
+         HashMap<Integer, UserInputForBeadPlate> userInputs2 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos2);
          int res = userInputs1.get(0).getNumOfProbes();
-         for(int i  = 0 ; i <plates;i++)
+         for(int i  = 1 ; i <= plates;i++)
          {
              res = Math.min(res, userInputs1.get(i).getNumOfProbes());
              res = Math.min(res, userInputs2.get(i).getNumOfProbes());
@@ -2634,11 +2638,12 @@ private HashMap<Integer, Double>  CombinePValue(HashMap<Integer, List<Double>> s
             ArrayList<ArrayList<ArrayList<ArrayList<ArrayList<Double>>>>> listOfChangePVal = new ArrayList<ArrayList<ArrayList<ArrayList<ArrayList<Double>>>>>();//List of values per experiment
             ArrayList<ArrayList<ArrayList<ArrayList<ArrayList<Double>>>>> tempChangePVal = new ArrayList<ArrayList<ArrayList<ArrayList<ArrayList<Double>>>>>(); //Used to hold the temp array that will be added on later 
             
-            List<UserInputForBeadPlate> inputs =  ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(i);
+            HashMap<Integer, UserInputForBeadPlate> inputs =  ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(i);
             int numberOfPlates = inputs.size();
-            UserInputForBeadPlate input = inputs.get(0);//Used to get the first plate index this is hard coded witht he assumption that the plate number sizes does not change with experiments 
+            UserInputForBeadPlate input = inputs.get(1);//Used to get the first plate index this is hard coded witht he assumption that the plate number sizes does not change with experiments 
         
-            int numberOfSamples  = input.getNumOfSamples();
+            //int numberOfSamples  = input.getNumOfSamples();
+            int numberOfSamples = ModelForExperiments.getInstance().getExperimentModel().get(i).getSamples();
             for(int k = 0; k<numberOfSamples; k++ )
             {   
                 

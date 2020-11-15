@@ -111,6 +111,11 @@ public class FoldChangeController implements Initializable {
     public void sampleNameRetriever(String[] names)
     {
         sampleNames = names;
+        
+        // Amman: 'added print statements for debugging purposes'
+        for(int i = 0; i < sampleNames.length; i++) {
+            System.out.println("Sample " + i + ": " + sampleNames[i]);
+        }
     }
 
    //dynamically add rows for gridpane base on previous user input. 
@@ -185,13 +190,14 @@ public class FoldChangeController implements Initializable {
             experimentButtons.add(expBtn); // add the button to a list of radio buttons
             gridPane.add(expBtn, 0, i);
             GridPane.setMargin(expBtn, new Insets(10));
-
+            
             // loop through each sample in experiment i
             for(int j = 1; j <=getLargestSampleCountForOneExperiment(i); j++)
             {
                 //curSample = j;
                 RadioButton btn = new RadioButton(); // btn is for selecting a sample
                 btn.setDisable(true); // buttons should only be enabled when corresponding experiment button is selected
+                // sampleNameRetriever(sampleNames);
                 btn.setText(sampleNames[j - 1]); //TODO***********************************************
                 btn.setAlignment(Pos.CENTER);
                        
@@ -258,6 +264,7 @@ public class FoldChangeController implements Initializable {
                     else {
                         selectedEBs.remove(expBtn);
                     }
+                    
                     /*
                     * loop through each experiment button and disable corresponding sample buttons,
                     * only if that experiment button is not currently selected. Otherwise, we enable
@@ -442,10 +449,10 @@ public class FoldChangeController implements Initializable {
    */
     private int getSamllestProbes(int experimementPos1, int experimementPos2, int plates)
     {
-         List<UserInputForBeadPlate> userInputs1 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos1);
-         List<UserInputForBeadPlate> userInputs2 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos2);
+         HashMap<Integer, UserInputForBeadPlate> userInputs1 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos1);
+         HashMap<Integer, UserInputForBeadPlate> userInputs2 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos2);
          int res = userInputs1.get(0).getNumOfProbes();
-         for(int i  = 0 ; i <plates;i++)
+         for(int i  = 1 ; i <= plates;i++)
          {
              res = Math.min(res, userInputs1.get(i).getNumOfProbes());
              res = Math.min(res, userInputs2.get(i).getNumOfProbes());
