@@ -219,11 +219,11 @@
                               <Text layoutX="3.0" layoutY="114.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Samples" />
                               <Text layoutX="4.0" layoutY="148.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Replicates" />
                               <Text layoutX="17.0" layoutY="13.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Input data here for bead plates:" />
-                              <TextField fx:id="numReplicaInput" layoutX="73.0" layoutY="134.0" prefHeight="26.0" prefWidth="91.0" />
+                              <TextField fx:id="numReplicaInput" layoutX="73.0" layoutY="134.0" prefHeight="26.0" prefWidth="150.0" />
                               <Text layoutX="5.0" layoutY="183.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Probes" />
-                              <TextField fx:id="numSampleInput" layoutX="73.0" layoutY="96.0" prefHeight="26.0" prefWidth="91.0" />
-                              <TextField fx:id="sampleNamesInput" layoutX="73.0" layoutY="205.0" prefHeight="34.0" prefWidth="91.0" />
-                              <TextField fx:id="numProbeInput" layoutX="73.0" layoutY="169.0" prefHeight="26.0" prefWidth="91.0" />
+                              <TextField fx:id="numSampleInput" layoutX="73.0" layoutY="96.0" prefHeight="26.0" prefWidth="150.0" />
+                              <TextField fx:id="sampleNamesInput" layoutX="73.0" layoutY="205.0" prefHeight="34.0" prefWidth="150.0" />
+                              <TextField fx:id="numProbeInput" layoutX="73.0" layoutY="169.0" prefHeight="26.0" prefWidth="150.0" />
                               <JFXButton fx:id="checkLayout" layoutX="68.0" layoutY="257.0" onAction="#checkLayoutEvent" prefHeight="34.0" prefWidth="115.0" stylesheets="@inputData.css" text="Confirm Change">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
@@ -234,24 +234,24 @@
                                     <Font name="System Bold" size="12.0" />
                                  </font>
                               </JFXButton>
-                              <Text layoutX="73.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Plate1" />
+                              <Text layoutX="320.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Plate #" />
                               <Text layoutX="9.0" layoutY="223.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Name of Samples" wrappingWidth="63.77929449081421" />
                               <Button fx:id="experimentType1" disable="true" layoutX="126.0" layoutY="21.0" mnemonicParsing="false" text="Nerunaric " />
                               <Text layoutX="5.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Experiment Type:" />
                               <Button fx:id="experimentType2" layoutX="216.0" layoutY="21.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="61.0" text="T-Cell" />
-                              <ChoiceBox fx:id="DropdownPlatesChoiceBox" layoutX="283.0" layoutY="21.0" onMouseClicked="#changePlateEvent" prefWidth="150.0" />
-                              <TableView fx:id="probeTable" layoutX="368.0" layoutY="62.0" prefHeight="328.0" prefWidth="158.0">
+                              <ChoiceBox fx:id="DropdownPlatesChoiceBox" layoutX="383.0" layoutY="21.0" onMouseClicked="#changePlateEvent" prefWidth="150.0" />
+                              <TableView fx:id="probeTable" layoutX="568.0" layoutY="62.0" prefHeight="328.0" prefWidth="188.0">
                                 <columns>
                                   <TableColumn fx:id="ProbeCol" prefWidth="55.0" text="Probe #" />
                                   <TableColumn fx:id="BeadPlateProbeCol" maxWidth="160.0" minWidth="-1.0" onEditCommit="#editProbeCellEvent" prefWidth="118.0" text="Bead Plate1 " />
                                 </columns>
                               </TableView>
-                              <JFXButton fx:id="editProbesInBeadPlate" layoutX="464.0" layoutY="25.0" onAction="#editBeadForPlate1Event" prefHeight="34.0" prefWidth="61.0" stylesheets="@inputData.css" text="Edit">
+                              <JFXButton fx:id="editProbesInBeadPlate" layoutX="664.0" layoutY="25.0" onAction="#editBeadForPlate1Event" prefHeight="34.0" prefWidth="61.0" stylesheets="@inputData.css" text="Edit">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>
                               </JFXButton>
-                              <JFXButton fx:id="loadProbe" layoutX="276.0" layoutY="25.0" onAction="#loadProbe1Event" prefHeight="34.0" prefWidth="61.0" stylesheets="@inputData.css" text="Load" visible="false">
+                              <JFXButton fx:id="loadProbe" layoutX="276.0" layoutY="25.0" onAction="#loadProbeEvent" prefHeight="34.0" prefWidth="61.0" stylesheets="@inputData.css" text="Load" visible="false">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>
