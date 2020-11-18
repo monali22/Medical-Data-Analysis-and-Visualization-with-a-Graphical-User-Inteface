@@ -4,9 +4,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -86,7 +85,12 @@
                           <children>
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="358.0" prefWidth="555.0">
                                   <children>
-                                      <GridPane fx:id="beadPlateLayout" layoutY="14.0" prefHeight="291.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <ScrollPane layoutX="-61.0" prefHeight="256.0" prefWidth="879.0">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                                      </content>
+                                    </ScrollPane>
+                                      <GridPane fx:id="beadPlateLayout" layoutX="-60.0" layoutY="14.0" prefHeight="256.0" prefWidth="879.0" AnchorPane.bottomAnchor="102.0" AnchorPane.leftAnchor="-60.0" AnchorPane.rightAnchor="-264.0" AnchorPane.topAnchor="0.0">
                                           <columnConstraints>
                                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -242,11 +246,11 @@
                               <ChoiceBox fx:id="DropdownPlatesChoiceBox" layoutX="383.0" layoutY="21.0" onMouseClicked="#changePlateEvent" prefWidth="150.0" />
                               <TableView fx:id="probeTable" layoutX="568.0" layoutY="62.0" prefHeight="328.0" prefWidth="188.0">
                                 <columns>
-                                  <TableColumn fx:id="ProbeCol" prefWidth="55.0" text="Probe #" />
-                                  <TableColumn fx:id="BeadPlateProbeCol" maxWidth="160.0" minWidth="-1.0" onEditCommit="#editProbeCellEvent" prefWidth="118.0" text="Bead Plate1 " />
+                                  <TableColumn fx:id="ProbeCol" prefWidth="85.5999755859375" text="Probe #" />
+                                  <TableColumn fx:id="BeadPlateProbeCol" maxWidth="160.0" minWidth="-1.0" onEditCommit="#editProbeCellEvent" prefWidth="101.5999755859375" text="Bead Plate1 " />
                                 </columns>
                               </TableView>
-                              <JFXButton fx:id="editProbesInBeadPlate" layoutX="664.0" layoutY="25.0" onAction="#editBeadForPlate1Event" prefHeight="34.0" prefWidth="61.0" stylesheets="@inputData.css" text="Edit">
+                              <JFXButton fx:id="editProbesInBeadPlate" layoutX="694.0" layoutY="25.0" onAction="#editBeadForPlate1Event" prefHeight="34.0" prefWidth="61.0" stylesheets="@inputData.css" text="Edit">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>
