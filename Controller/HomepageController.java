@@ -155,10 +155,11 @@ public class HomepageController implements Initializable {
     List<TextField> layoutCellsList = new ArrayList<>(); // List to hold textfield in each gridpane cells. 
     
     //colors list for set diffrent colors to each probe
-    List<String> colors = new ArrayList<>(Arrays.asList("-fx-background-color:#B0E0E6;", "-fx-background-color:yellow;", "-fx-background-color:#CD5C5c;", "-fx-background-color:pink;", 
+    private List<String> colors = new ArrayList<>(Arrays.asList("-fx-background-color:#B0E0E6;", "-fx-background-color:yellow;", "-fx-background-color:#CD5C5c;", "-fx-background-color:pink;", 
             "-fx-background-color:#ADFF2F;", "-fx-background-color:orange;", "-fx-background-color:#FFD700;", "-fx-background-color:#DDA0DD;", "-fx-background-color:AQUA;",
             "-fx-background-color:#87CEFA;", "-fx-background-color:#F5F5DC;", "-fx-background-color:BISQUE;", "-fx-background-color:brown;", "-fx-background-color:CORAL;"));
     
+    private int colorIndex = 14;
     
     //probe table area    
     @FXML
@@ -211,6 +212,7 @@ public class HomepageController implements Initializable {
         // populate analytes data. 
         beadCol.setCellValueFactory(new PropertyValueFactory<bead,String>("RegionNumber"));
         analyteCol.setCellValueFactory(new PropertyValueFactory<bead,String>("Analyte"));
+        
         
         /*
         if(ModelForExperiments.getInstance().getAnalytes()!=null) 
@@ -320,7 +322,7 @@ public class HomepageController implements Initializable {
                             {
                                 int size = Integer.parseInt(s);
                                 int index = (item.getProbeCount()-1) % size;
-                                setStyle(colors.get(index));                    
+                                setStyle(colors.get(index % colors.size()));                    
                             }
 
                     }
@@ -668,6 +670,7 @@ public class HomepageController implements Initializable {
         {
             layoutCellsList.get(j).clear();
             layoutCellsList.get(j).setStyle("-fx-background-color:white;");
+            layoutCellsList.get(j).setEditable(false);
         }
     }
 
@@ -746,7 +749,7 @@ public class HomepageController implements Initializable {
         {
             for(int i = 0; i < numberOfProbes; i++)
             {                    
-
+                
                 String color = colors.get(i % colors.size());  // choose different color to each probe
 
                 for(int j = 0; j < numberOfSamples * numberOfReps; j++)
@@ -754,11 +757,12 @@ public class HomepageController implements Initializable {
                     layoutCellsList.get(cellsCount).setStyle(color);  // set color to those cells.
                     layoutCellsList.get(cellsCount).setText(nameList[cellsCount %(nameList.length)] + "." + ((j)/numberOfSamples+1)); //set probe text to those cells
                     cellsCount++;
+                    layoutCellsList.get(cellsCount).setEditable(false);
                 }
             }
         }       
     }
-
+    
     public List<TextField> getCells(GridPane gridPane)
     {
         List<TextField> cells = new ArrayList<>();
