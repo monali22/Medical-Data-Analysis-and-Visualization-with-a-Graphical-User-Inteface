@@ -158,6 +158,22 @@ public class MenuBarController implements Initializable {
         }
     }
 
+    /*
+    * precondition: the user has tried to navigate away from
+    * the Input menu.
+    * postcondition: this method checks if all experiments have
+    * their data saved in ModelForExperiments.java, if not,
+    * it will show an error message.
+    */
+    public boolean checkModelComplete() {
+        if (!ModelForExperiments.getInstance().isModelComplete()) {
+            ErrorMsg error = new ErrorMsg();
+            error.showError("Please confirm all experiments first!");
+            return false;
+        }
+        return true;
+    }
+    
     private void switchToMedianValue() {
         // when no experiments has been set up, median value has no data to show. 
         if (ModelForExperiments.getInstance().getExperiments() == null || ModelForExperiments.getInstance().getExperiments().isEmpty()) {
@@ -165,6 +181,14 @@ public class MenuBarController implements Initializable {
             error.showError("Please set up experiments first!");
             return;
         }
+        
+        if(!checkModelComplete()) {
+            return;
+        }
+        else {
+            System.out.println("isExpComplete: " + ModelForExperiments.getInstance().getExperimentModel().get(1).isExpComplete);
+        }
+        // need another if statement to check if all experiments have been confirmed
         /*
         if(false)
         {
@@ -188,6 +212,8 @@ public class MenuBarController implements Initializable {
 
     private void switchToFoldChange() {
 
+        if(!checkModelComplete()) return;
+        
         try {
 
             URL paneTwoUrl = getClass().getResource("/View/FoldChange.fxml");
@@ -203,6 +229,8 @@ public class MenuBarController implements Initializable {
 
     private void switchToANC() {
 
+        if(!checkModelComplete()) return;
+        
         try {
 
             URL paneTwoUrl = getClass().getResource("/View/ANC.fxml");

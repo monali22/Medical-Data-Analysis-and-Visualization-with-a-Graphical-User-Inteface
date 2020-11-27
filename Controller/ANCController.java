@@ -492,9 +492,9 @@ public class ANCController implements Initializable {
             int numberOfPlates = inputs.size();
             numSamples = numberOfPlates; 
             //System.out.println("experiment is " + i ); // for debug
-            for(int j = 1; j <= numberOfPlates; j++)
+            for(int j = 0; j < numberOfPlates; j++)
             {
-                UserInputForBeadPlate input = inputs.get(j);
+                UserInputForBeadPlate input = inputs.get(j+1);
                 //int numberOfSamples  = input.getNumOfSamples();
                 int numberOfSamples = ModelForExperiments.getInstance().getExperimentModel().get(i).getSamples();
                 ObservableList<probeTableData> ProbesForOnePlate = probesListForCurExperiment.get(j+1);
@@ -507,6 +507,7 @@ public class ANCController implements Initializable {
                      {
                         //System.out.println("probe Index is " + x ); 
                         HashMap<Integer, Double> finalANCForOneProbe  = getANCForOneProbe(i,j,k,x, ProbesForOnePlate, orignalDataForOneExperiment, input);
+                        //System.out.println("exp: " + i + " plate: " + j + " sample: " + k);
                         ModelForExperiments.getInstance().setOneProbeDataForANC(i, j, k, finalANCForOneProbe);
                         HashMap<Integer, List<Double>> finalANCForTwoProbe  = getANCForTwoProbe(i,j,k,x, ProbesForOnePlate, orignalDataForOneExperiment, input);
                         ComboData.add(finalANCForTwoProbe);
@@ -2429,9 +2430,7 @@ private HashMap<Integer, Double>  CombinePValue(HashMap<Integer, List<Double>> s
 
        List<HashMap<Integer,Double>> mv1ForOnePlate = new ArrayList<>();
        List<HashMap<Integer,Double>>  mv2ForOnePlate  = new ArrayList<>();
-       
-       
-      
+        
       List<List<HashMap<Integer,Double>>> foldChange = new ArrayList<>();
       fcplates = Math.min(ModelForExperiments.getInstance().getMedianValueMatrix().get(experimementPos1).size(), 
               ModelForExperiments.getInstance().getMedianValueMatrix().get(experimementPos2).size()); //get the samller size of plates 
@@ -2473,8 +2472,8 @@ private HashMap<Integer, Double>  CombinePValue(HashMap<Integer, List<Double>> s
     {
          HashMap<Integer, UserInputForBeadPlate> userInputs1 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos1);
          HashMap<Integer, UserInputForBeadPlate> userInputs2 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos2);
-         int res = userInputs1.get(0).getNumOfProbes();
-         for(int i  = 1 ; i <= plates;i++)
+         int res = userInputs1.get(1).getNumOfProbes();
+         for(int i  = 2 ; i <= plates;i++)
          {
              res = Math.min(res, userInputs1.get(i).getNumOfProbes());
              res = Math.min(res, userInputs2.get(i).getNumOfProbes());

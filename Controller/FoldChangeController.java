@@ -326,8 +326,8 @@ public class FoldChangeController implements Initializable {
         int sampleIndex1 = gridPane.getColumnIndex(selectedRBs.get(0)) -1;
         int experimementPos2 = gridPane.getRowIndex(selectedRBs.get(1));
         int sampleIndex2 = gridPane.getColumnIndex(selectedRBs.get(1)) -1;
-        sample1 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos1).get(0).getNames()[sampleIndex1];
-        sample2 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos2).get(0).getNames()[sampleIndex2];
+        sample1 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos1).get(1).getNames()[sampleIndex1];
+        sample2 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos2).get(1).getNames()[sampleIndex2];
        // display sample name on the top of the table
        sample1Name.setText("Experiment " + Integer.toString(gridPane.getRowIndex(selectedRBs.get(0))) + " " + sample1 + ", ");
        sample2Name.setText("Experiment " + Integer.toString(gridPane.getRowIndex(selectedRBs.get(1))) + " " + sample2);
@@ -361,6 +361,7 @@ public class FoldChangeController implements Initializable {
         int pos = 1; // for put plate 1/2 at the right position. 
         for(int i = 1; i <= plates; i++)
         {
+            System.out.println("Plate #" + i);
             //set width for cells of the cols
             ColumnConstraints column = new ColumnConstraints(70);
             platesGridPane.getColumnConstraints().add(column);                
@@ -374,6 +375,7 @@ public class FoldChangeController implements Initializable {
             ObservableList<probeTableData> probes = ModelForExperiments.getInstance().getProbeListForPopulate(experimementPos1, i);
             for(int j = 0 ; j < probes.size();j++)
             {
+                System.out.println("Probe #" + j);
                 platesGridPane.getColumnConstraints().add(column);    
                 Label label1  = new Label();
                 s = probes.get(j).getProbeForPlate(); // get probe's name (analyte)
@@ -451,8 +453,8 @@ public class FoldChangeController implements Initializable {
     {
          HashMap<Integer, UserInputForBeadPlate> userInputs1 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos1);
          HashMap<Integer, UserInputForBeadPlate> userInputs2 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos2);
-         int res = userInputs1.get(0).getNumOfProbes();
-         for(int i  = 1 ; i <= plates;i++)
+         int res = userInputs1.get(1).getNumOfProbes();
+         for(int i = 2 ; i <= plates;i++)
          {
              res = Math.min(res, userInputs1.get(i).getNumOfProbes());
              res = Math.min(res, userInputs2.get(i).getNumOfProbes());

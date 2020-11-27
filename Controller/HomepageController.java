@@ -51,6 +51,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
@@ -112,7 +113,7 @@ public class HomepageController implements Initializable {
     @FXML
     private Text totalNumberOfExperiments;
     @FXML
-    private Text currentExperiementNumber;
+    private Text currentExperimentNumber;
     @FXML
     private Text XMLfilesNames;
     private int curExperiment = -1; //initiliaze to -1.
@@ -120,6 +121,9 @@ public class HomepageController implements Initializable {
     @FXML
     private Button setUpExperiments; // click to open a new page to edit xml files for each experiment.
  
+    @FXML
+    private CheckBox experimentComplete = new CheckBox();
+    
     // text boxes for each bead plate, only need (numReplicaInput, numProbeInput, sampleNamesInput)
     @FXML
     private TextField numSampleInput;
@@ -147,7 +151,10 @@ public class HomepageController implements Initializable {
     @FXML
     private ChoiceBox<Integer> DropdownPlatesChoiceBox;
     
-    // the grids displaying the samples under each tab (only need one that we update when changing experiment or user input)
+    @FXML
+    private CheckBox plateComplete = new CheckBox();
+    
+    // the grid displaying the samples under each tab (only need one that we update when changing experiment or user input)
     @FXML
     private GridPane beadPlateLayout;
     
@@ -161,7 +168,7 @@ public class HomepageController implements Initializable {
     
     private int colorIndex = 14;
     
-    //probe table area    
+    //probe table area
     @FXML
     private TableView<probeTableData> probeTable;
     @FXML
@@ -195,7 +202,7 @@ public class HomepageController implements Initializable {
     private Button experimentType1; // nerunaric experiment type: TODO
     @FXML 
     private Button experimentType2; // T-cell experiment type: currently the default and only type
-     
+    
     /*
     * Intializer collects probe table data and adds a listener
     * to the experiment and plates choice box that will be called
@@ -204,6 +211,10 @@ public class HomepageController implements Initializable {
     */
     @Override
     public void initialize(URL url, ResourceBundle rb)   {
+        // initialize checkboxes to be unfilled
+        experimentComplete.setSelected(false);
+        plateComplete.setSelected(false);
+
         loadProbes(); // collect probe table data from txt files
         
         DropdownExperimentsChoiceBox.getSelectionModel().selectedItemProperty().addListener(this::itemChanged); 
@@ -212,7 +223,6 @@ public class HomepageController implements Initializable {
         // populate analytes data. 
         beadCol.setCellValueFactory(new PropertyValueFactory<bead,String>("RegionNumber"));
         analyteCol.setCellValueFactory(new PropertyValueFactory<bead,String>("Analyte"));
-        
         
         /*
         if(ModelForExperiments.getInstance().getAnalytes()!=null) 
@@ -315,12 +325,13 @@ public class HomepageController implements Initializable {
                     super.updateItem(item, empty);
                     if (item == null || empty) {
                         setStyle("");
-                    } else {                        
-                        //need get size of probes of that plate and then update the color correctly 
+                    } else {
+                        //need get size of probes of that plate and then update the color correctly
                         String s = numProbeInput.getText();
                         if(s!= null && !s.equals(""))
                             {
-                                int size = Integer.parseInt(s);
+                                //int size = Integer.parseInt(s);
+                                int size = ModelForExperiments.getInstance().getUserInputsForOneExperiment(curExperiment).get(curPlate).getNumOfProbes();
                                 int index = (item.getProbeCount()-1) % size;
                                 setStyle(colors.get(index % colors.size()));                    
                             }
@@ -477,7 +488,7 @@ public class HomepageController implements Initializable {
         //clear choice box and other text
         experiments.clear();
         totalNumberOfExperiments.setText("0");
-        currentExperiementNumber.setText("");
+        currentExperimentNumber.setText("");
         XMLfilesNames.setText("");
         curExperiment = -1;
         ModelForExperiments.getInstance().setCurrentExperiment(curExperiment);
@@ -507,12 +518,15 @@ public class HomepageController implements Initializable {
     // choice box listener for experiments dropdown
     public void itemChanged(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) 
     {
+        if(newValue == null)
+            return;
+        
         int val = (int)newValue; // curExperiment -1  e.g. 0
         curExperiment = experiments.get(val - 1); // get current Experiment number e.g 1
         curPlate = 1; // default
         ModelForExperiments.getInstance().setCurPlate(curPlate);
         // change information on the top experiment area 
-        currentExperiementNumber.setText(String.valueOf(curExperiment));
+        currentExperimentNumber.setText(String.valueOf(curExperiment));
         ModelForExperiments.getInstance().setCurrentExperiment(curExperiment);
         HashMap<Integer, HashMap<Integer, UserInputForBeadPlate>> userInputsForBeadPlateMap = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap();
         List<String> files = ModelForExperiments.getInstance().getExperimentsXMLFileMap().get(curExperiment);
@@ -558,8 +572,24 @@ public class HomepageController implements Initializable {
        initPlateChoiceBox(); 
        setBeadsTable();
        
+       // set the checkboxes based on if experiment/plate are complete
+       if(ModelForExperiments.getInstance().getExperimentModel().get(curExperiment).isExpComplete) {
+            experimentComplete.setSelected(true);
+            plateComplete.setSelected(true);
+       }
+       else {
+            experimentComplete.setSelected(false);
+            if(ModelForExperiments.getInstance().getExperimentModel().get(curExperiment).getBeadPlate(1).isPlateComplete) {
+                plateComplete.setSelected(true);
+            }
+            else
+                plateComplete.setSelected(false);
+       }
+       
         // display bead plate layout and probe tables. 
-        checkLayoutEventHelper();
+        //checkLayoutEventHelper();
+        displayBeadsPlateLayout(curExperiment);   
+        displayProbeTable();
     }
     
     // choice box listener for bead plates dropdown
@@ -571,7 +601,18 @@ public class HomepageController implements Initializable {
         ModelForExperiments.getInstance().setCurPlate(curPlate);
         setBeadsTable();
         displayUserInput(ModelForExperiments.getInstance().getUserInputsForOneExperiment(curExperiment));
-        checkLayoutEventHelper();        
+        //checkLayoutEventHelper(); 
+        
+        // set plate checkbox based on if current plate is completed
+        if(ModelForExperiments.getInstance().getExperimentModel().get(curExperiment).getBeadPlate(curPlate).isPlateComplete) {
+            plateComplete.setSelected(true);
+        }
+        else {
+            plateComplete.setSelected(false);   
+        }
+        
+        displayBeadsPlateLayout(curExperiment);
+        displayProbeTable();
     }      
 
     //update left upper experiments info after user upload xml files or manually set up xml files for experiments
@@ -602,7 +643,7 @@ public class HomepageController implements Initializable {
         DropdownPlatesChoiceBox.setItems(platesChoices);
         DropdownPlatesChoiceBox.setValue(1);
         */
-        currentExperiementNumber.setText(String.valueOf(defaultExperiment));
+        currentExperimentNumber.setText(String.valueOf(defaultExperiment));
         ModelForExperiments.getInstance().setCurrentExperiment(defaultExperiment);
         List<String> files = ModelForExperiments.getInstance().getExperimentsXMLFileMap().get(defaultExperiment);
         XMLfilesNames.setText(generateXMLFilesString(files));    
@@ -659,21 +700,29 @@ public class HomepageController implements Initializable {
         numReplicaInput.clear();
         sampleNamesInput.clear();
         numProbeInput.clear();
-
     }  
     
-    //heleper function clear the bead plate layout. However, it also clears grid lines. 
+    /*
+    * clears the grid pane by deleting contents in each
+    * cell one at a time.
+    */
     private void clearLayout()
     {
         layoutCellsList = getCells(beadPlateLayout);
         for(int j =0; j <layoutCellsList.size(); j++)
         {
             layoutCellsList.get(j).clear();
-            layoutCellsList.get(j).setStyle("-fx-background-color:white;");
+            layoutCellsList.get(j).setStyle("-fx-background-color:white;"); // set color of each cell to white
             layoutCellsList.get(j).setEditable(false);
         }
     }
 
+    /*
+    * precondition: have a UserInputForBeadPlate initialized for the current
+    * bead plate.
+    * postcondition: set text fields to contain corresponding values in
+    * current bead plates user input values.
+    */
     private void displayUserInput(HashMap<Integer, UserInputForBeadPlate> data) {
         // need to get current bead plate of current experiment
         curPlate = ModelForExperiments.getInstance().getCurPlate();
@@ -683,7 +732,7 @@ public class HomepageController implements Initializable {
         sampleNamesInput.setText(data.get(curPlate).getNameInput()); 
     }
 
-    //for display layout button. click to diaplay bead plate layout on each bead plate tab. 
+    // called when user clicks on 'Confirm Change' button on UI 
     @FXML
     private void checkLayoutEvent(ActionEvent event) {
 
@@ -694,17 +743,20 @@ public class HomepageController implements Initializable {
                 error.showError("choose an experiment first!"); 
                 return;
        }
-       checkLayoutEventHelper();
+       checkLayoutEventHelper(); // call helper method
     }
     
-   
+    /*
+    * 
+    */
     private void checkLayoutEventHelper()
     {  
         // gather users' input and put it in to map base on size of XML files. 
         UserInputForBeadPlate userInputsForBeadPlate = new UserInputForBeadPlate();
         curExperiment = ModelForExperiments.getInstance().getCurrentExperiment();
         //int size = ModelForExperiments.getInstance().getExperimentsXMLFileMap().get(curExperiment).size();
-       
+        
+        // add user input to model, return true if successful
         if(!getUserInputforPlate(userInputsForBeadPlate)) {
             return;
         }
@@ -715,49 +767,58 @@ public class HomepageController implements Initializable {
         //HashMap<Integer, HashMap<Integer, ObservableList<probeTableData>>> probesListForPopulate  = ModelForExperiments.getInstance().getProbeMapForPopulate(); // debug
     }
     
-    // load probe and diaply probes on to probe tables base on xml files size. 
+    // display probe table to UI. 
     private void displayProbeTable()
     {
-       loadProbeHelper();       
+       loadProbeHelper(); // calls method that loads probe table for current bead plate  
     }
     
-    //get data of current experiement and display the bead plate layout. 
+    /*
+    * this method displays the current bead plates contents in a gridpane.
+    * it first clears the previous grid pane's contents and checks if the
+    * current experiment isn't null before populating the grid pane.
+    */
     private void displayBeadsPlateLayout(int curExperiment)
     { 
-        clearLayout(); // in case the new input of totoal number beads is less than previous input 
+        clearLayout(); // clear the bead plate layout so we can repopulate it with current plate data 
         HashMap<Integer, HashMap<Integer, UserInputForBeadPlate>> userInputsForBeadPlateMap = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap();
+        
+        // if experiment is null, there is nothing to display so we return
         if(userInputsForBeadPlateMap.get(curExperiment) == null) return;
         //List<UserInputForBeadPlate> inputs = userInputsForBeadPlateMap.get(curExperiment);
-        displayLayout(userInputsForBeadPlateMap.get(curExperiment).get(curPlate));
+        displayLayout(userInputsForBeadPlateMap.get(curExperiment).get(curPlate)); // display grid pane to UI
     }
 
-    // display layout in the gridpane
-    // index: index of the bead plate 
-    // data: user input data for that bead plate   
+    /*
+    * populate the grid pane with the contents of the 
+    * current bead plate. the contents are based on the 
+    * plates number of replicates, probes, samples,
+    * and sample names.
+    */
     private void displayLayout(UserInputForBeadPlate data) {
-        
+
          //fill cells with colors and values base on users' inputs
         layoutCellsList = getCells(beadPlateLayout);
         int cellsCount =0;
         String[] nameList = data.getNames();
-        int cellsToFill = ModelForExperiments.getInstance().getExperimentModel().get(curExperiment).getSamples() * data.getNumOfReplicas()*data.getNumOfProbes(); // totoal cells need to fill in in the grid pane
+        int cellsToFill = ModelForExperiments.getInstance().getExperimentModel().get(curExperiment).getSamples() * data.getNumOfReplicas()*data.getNumOfProbes(); // total cells need to fill in in the grid pane
 
         int numberOfProbes=data.getNumOfProbes();
         int numberOfSamples = ModelForExperiments.getInstance().getExperimentModel().get(curExperiment).getSamples();
         int numberOfReps = data.getNumOfReplicas();
         while(cellsCount<cellsToFill)
         {
+            // set all cells color and text values for the UI
             for(int i = 0; i < numberOfProbes; i++)
             {                    
-                
                 String color = colors.get(i % colors.size());  // choose different color to each probe
 
                 for(int j = 0; j < numberOfSamples * numberOfReps; j++)
                 {
                     layoutCellsList.get(cellsCount).setStyle(color);  // set color to those cells.
                     layoutCellsList.get(cellsCount).setText(nameList[cellsCount %(nameList.length)] + "." + ((j)/numberOfSamples+1)); //set probe text to those cells
-                    cellsCount++;
                     layoutCellsList.get(cellsCount).setEditable(false);
+                    cellsCount++;
                 }
             }
         }       
@@ -843,15 +904,20 @@ public class HomepageController implements Initializable {
         loadProbeHelper();
     }
     
-    private void loadProbeHelper() {      
+    /*
+    * loads probes to the probe table in the UI, based on number of probes
+    * specified in the appropriate text field.
+    */
+    private void loadProbeHelper() { 
         if(probes.size()!=0)  // if not empty, clear previous data first. 
             probes.clear();
 
-        // if no map generate for current experiment probles, initiliaze it. 
+        // if no map generate for current experiment probes, initialize it. 
         if(ModelForExperiments.getInstance().getProbeMapForPopulate().get(curExperiment) == null)
             ModelForExperiments.getInstance().initializeProbeListMap(curExperiment);
         //HashMap<Integer, ObservableList<probeTableData>> map = ModelForExperiments.getInstance().getProbeMapForPopulate().get(curExperiment);
-            // when no input or input is 0, error
+        
+        // check if probe text has no input or input is 0, produce error message
         if(numProbeInput.getText() == null || Integer.parseInt(numProbeInput.getText()) == 0 )
         {
             ErrorMsg error = new ErrorMsg();
@@ -860,30 +926,43 @@ public class HomepageController implements Initializable {
         else // load # of probles base on user input 
         {
             ObservableList<probeTableData> probesList = FXCollections.observableArrayList();
-            for(int i = 0; i < Integer.parseInt(numProbeInput.getText());i++ )
+            
+            // load as many probes to table as inputted in the probes text field
+            for(int i = 0; i < /*Integer.parseInt(numProbeInput.getText())*/ ModelForExperiments.getInstance().getUserInputsForOneExperiment(curExperiment).get(curPlate).getNumOfProbes();i++ )
             {
                 probeTableData probe = probesToLoad.get(/*ModelForExperiments.getInstance().getCurPlate()*/ curPlate).get(i);
                 probesList.add(probe);
             }
             
+            //add updated table to the model
             ModelForExperiments.getInstance().addOneProbeListForPopulate(curExperiment,/*ModelForExperiments.getInstance().getCurPlate()*/ curPlate,probesList);
             HashMap<Integer, ObservableList<probeTableData>> probesListForCurExperiment = ModelForExperiments.getInstance().getProbeMapForPopulate().get(curExperiment); 
         
             probes.addAll(ModelForExperiments.getInstance().getProbeListForPopulate(curExperiment, curPlate));
             probeTable.refresh();
-
         }
     }     
    
-    //gather user inputs for bead plate1 form each text fileds 
+    //gather user inputs for bead plate form each text fields 
     //save the userInputsForBeadPlate in to the list passed in
     private boolean getUserInputforPlate(UserInputForBeadPlate userInputsForBeadPlate) {
         String samples = numSampleInput.getText();
         String reps = numReplicaInput.getText();
         String probes = numProbeInput.getText();
 
-        if(hasErrorsForUserInput(samples, reps, probes)) return false; // if input valid return; 
         
+        if(hasErrorsForUserInput(samples, reps, probes, curPlate)) return false; // validate user input 
+        
+        // we must check if input is valid for every plate, as changing the number of samples affects entire experiment
+        for(int i = 1; i <= ModelForExperiments.getInstance().getExperimentModel().get(curExperiment).getNumPlates(); i++) {
+            if(i == curPlate)
+                continue; // redundant to check for errors, as we already do this before the for loop
+            
+            UserInputForBeadPlate tmp = ModelForExperiments.getInstance().getExperimentModel().get(curExperiment).getBeadPlate(i).getPlateDetails();
+            if(hasErrorsForUserInput(samples, String.valueOf(tmp.getNumOfReplicas()), String.valueOf(tmp.getNumOfProbes()), i)) return false;
+        }
+        
+        // convert strings into integers
         int numberOfSamples = Integer.parseInt(samples);
         int numberOfReps = Integer.parseInt(reps);
         int numberOfProbes =  Integer.parseInt(probes);  
@@ -894,15 +973,33 @@ public class HomepageController implements Initializable {
         ModelForExperiments.getInstance().setSampleNames(nameList);
 
         List<String> probeList = new ArrayList<>();
-        //combine user inputs and probeList into a UserInputForBeadPlate object
+        
+        // combine user inputs and probeList into a UserInputForBeadPlate object
         userInputsForBeadPlate = new UserInputForBeadPlate(numberOfReps, names, nameList, numberOfProbes, probeList);
-        ModelForExperiments.getInstance().addOneUserInputForPopulate(curExperiment, curPlate, userInputsForBeadPlate);
-        ModelForExperiments.getInstance().getExperimentModel().get(curExperiment).setSamples(numberOfSamples);
+        ModelForExperiments.getInstance().addOneUserInputForPopulate(curExperiment, curPlate, userInputsForBeadPlate); // add user input to model
+        ModelForExperiments.getInstance().getExperimentModel().get(curExperiment).setSamples(numberOfSamples); // set sample size for entire experiment
+        
+        // set boolean variable for plate to true after adding data to ModelForExperiments.java
+        ModelForExperiments.getInstance().getExperimentModel().get(curExperiment).getBeadPlate(curPlate).isPlateComplete = true;
+        plateComplete.setSelected(true); // set checkbox to true, gives visual indicator that plate data is saved to model
+        
+        // do a check to see if the entire experiments set of plates have been added to the model
+        ModelForExperiments.getInstance().getExperimentModel().get(curExperiment).isExperimentComplete();
+        
+        // check if experiment data has been stored in model
+        if(ModelForExperiments.getInstance().getExperimentModel().get(curExperiment).isExpComplete)
+            experimentComplete.setSelected(true); // set checkbox to true, gives visual indicator that experiment data is saved to model
+        
         return true;
     }
 
-    // check errors for user inputs and remind users
-    private boolean hasErrorsForUserInput(String samples, String reps, String probes)
+    /*
+    * Method checks that the values entered in the the text fields on the UI are valid values.
+    * This includes making sure that samples, replicates, and probes are proper integers,
+    * that they aren't empty strings, and that the product of these values doesn't exceed the 
+    * number of cells in the gridpane (96 cells).
+    */
+    private boolean hasErrorsForUserInput(String samples, String reps, String probes, int plateNum)
     {
         if(samples==null || samples.equals("") || reps==null || reps.equals("") || probes==null || probes.equals("") )
         {
@@ -932,25 +1029,33 @@ public class HomepageController implements Initializable {
         int numberOfReps = Integer.parseInt(reps);
         int numberOfProbes =  Integer.parseInt(probes);  
         //check whether input is valid 
+        
+        // product of values must NOT exceed 96, 96 is the number of cells in our plate grid pane.
         if(numberOfReps * numberOfProbes * numberOfSamples > 96) // this if statement may need to be changed
         {
             ErrorMsg error = new ErrorMsg();
-            error.showError("user input for Experiment " + curExperiment + " bead plate " + curPlate + " exceeds 96!");
+            error.showError("user input for Experiment " + curExperiment + " bead plate " + plateNum + " exceeds 96!");
             return true;
         }
         return false;
     }
 
+    // called when user clicks on the experiment choicebox.
     @FXML
     private void changeExperimentEvent(MouseEvent event) {
         // ensures user inputs save when switching between experiments
-        checkLayoutEventHelper(); 
+        //checkLayoutEventHelper(); 
+        displayBeadsPlateLayout(curExperiment);        
+        displayProbeTable();
     }
 
+    // called when user clicks on the plate choicebox.
     @FXML
     private void changePlateEvent(MouseEvent event) {
         // ensures user inputs save when switching between plates of the same experiment
-        checkLayoutEventHelper();
+        //checkLayoutEventHelper();
+        displayBeadsPlateLayout(curExperiment);        
+        displayProbeTable();
     }
 
     @FXML
