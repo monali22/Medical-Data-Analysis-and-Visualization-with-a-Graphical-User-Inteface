@@ -17,10 +17,12 @@ import javafx.collections.FXCollections;
 public class BeadPlate {
     private ObservableList<probeTableData> plateTable;
     private UserInputForBeadPlate plateDetails;
+    public boolean isPlateComplete;     // used to check if plate data is stored in ModelForExperiments.java
     
     public BeadPlate() {
         plateTable = FXCollections.observableArrayList();
         plateDetails = new UserInputForBeadPlate();
+        isPlateComplete = false;
     }
     
     public BeadPlate(ObservableList<probeTableData> plateTable, UserInputForBeadPlate plateDetails) {

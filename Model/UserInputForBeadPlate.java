@@ -20,6 +20,11 @@ public class UserInputForBeadPlate {
     private  int numberOfProbes;
     private  List<String> probeList;
 
+    /*
+    * constructor initializes instance variables to its default values.
+    * these default values are really arbitrary as long the product of
+    * replicas, probes and experiment samples don't exceed 96.
+    */
     public UserInputForBeadPlate() {
         numberOfReplicas = 2;
         namesInput = "WC, WK, KC, KK";

@@ -371,7 +371,17 @@ public class ModelForExperiments {
         return experimentModel.get(experiment).getBeadPlate(plate).getPlateTable();
     }
     
-
+    public boolean isModelComplete() {
+        for(int i = 1; i <= experimentModel.size(); i++) {
+            if(experimentModel.get(i).isExpComplete)
+                continue;
+            else {
+                return false; // all experiments are not complete
+            } 
+        }
+        return true;
+    }
+    
     // for all xmlfiles user uploaded
     public void setXMLFiles(List<String> list)
     {
@@ -417,9 +427,6 @@ public class ModelForExperiments {
     {
         return XMLFileMap;
     }
- 
-
-
     
     public HashMap<Integer, List<List<List<HashMap<Integer,Double>>>>>    getMedianValueMatrix()
     {

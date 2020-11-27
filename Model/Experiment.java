@@ -15,10 +15,12 @@ import java.util.*;
 public class Experiment {
     private Map<Integer, BeadPlate> beadPlates;
     private int numSamples;
+    public boolean isExpComplete; // used to check if plate data is stored in ModelForExperiments.java
     
     public Experiment() {
         beadPlates = new HashMap<>();
         numSamples = 4;
+        isExpComplete = false;
     }
     
     public Experiment(HashMap<Integer, BeadPlate> plates, int samples) {
@@ -75,12 +77,30 @@ public class Experiment {
     
     // check if all bead plates probe lists are empty
     public boolean areProbeListsEmpty() {
-        for(int i = 0; i < beadPlates.size(); i++) {
+        for(int i = 1; i <= beadPlates.size(); i++) {
             if(!beadPlates.get(i).isProbeListEmpty()) {
                 return false;
             }
         }
         
         return true;
+    }
+    
+    /*
+    * method checks if all bead plates data in this experiment
+    * have been added to the ModelForExperiments.java.
+    * If so, we set this experiments boolean value to true,
+    * otherwise set to false.
+    */
+    public void isExperimentComplete() {
+        for(int i = 1; i <= beadPlates.size(); i++) {
+            if(beadPlates.get(i).isPlateComplete)
+                continue;
+            else {
+                isExpComplete = false;
+                return;
+            }
+        }
+        isExpComplete = true;
     }
 }
