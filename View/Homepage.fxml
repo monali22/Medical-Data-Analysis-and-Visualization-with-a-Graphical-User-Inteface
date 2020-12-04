@@ -86,7 +86,7 @@
                           <children>
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="358.0" prefWidth="555.0">
                                   <children>
-                                      <GridPane fx:id="beadPlateLayout" layoutX="-5.0" layoutY="14.0" prefHeight="256.0" prefWidth="750.0" AnchorPane.bottomAnchor="102.0" AnchorPane.leftAnchor="-5.0" AnchorPane.rightAnchor="-190.0" AnchorPane.topAnchor="0.0">
+                                      <GridPane fx:id="beadPlateLayout" layoutX="-5.0" layoutY="14.0" prefHeight="256.0" prefWidth="750.0" gridLinesVisible="true" AnchorPane.bottomAnchor="102.0" AnchorPane.leftAnchor="-5.0" AnchorPane.rightAnchor="-190.0" AnchorPane.topAnchor="0.0">
                                           <columnConstraints>
                                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -247,7 +247,7 @@
                                   <TableColumn fx:id="BeadPlateProbeCol" maxWidth="160.0" minWidth="-1.0" onEditCommit="#editProbeCellEvent" prefWidth="101.5999755859375" text="Bead Plate1 " />
                                 </columns>
                               </TableView>
-                              <JFXButton fx:id="editProbesInBeadPlate" layoutX="694.0" layoutY="25.0" onAction="#editBeadForPlate1Event" prefHeight="34.0" prefWidth="61.0" stylesheets="@inputData.css" text="Edit">
+                              <JFXButton fx:id="editProbesInBeadPlate" layoutX="694.0" layoutY="25.0" onAction="#editBeadForPlateEvent" prefHeight="34.0" prefWidth="61.0" stylesheets="@inputData.css" text="Edit">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>
