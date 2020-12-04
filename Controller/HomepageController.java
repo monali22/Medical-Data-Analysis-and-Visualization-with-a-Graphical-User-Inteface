@@ -12,7 +12,6 @@ import Model.UserInputForBeadPlate;
 import Model.bead;
 import Model.probeTableData;
 import Model.ModelForExperiments;
-import Model.BeadPlate;
 import Model.PlateStatus;
 import Util.ErrorMsg;
 import com.jfoenix.controls.JFXButton;
@@ -154,20 +153,17 @@ public class HomepageController implements Initializable {
     @FXML
     private CheckBox plateComplete = new CheckBox();
     
-    // the grid displaying the samples under each tab (only need one that we update when changing experiment or user input)
+    // the grid displaying the samples for each plate
     @FXML
     private GridPane beadPlateLayout;
     
-    // maybe change from 'TextField' to 'Text' so user can't edit sample names
     List<TextField> layoutCellsList = new ArrayList<>(); // List to hold textfield in each gridpane cells. 
     
     //colors list for set diffrent colors to each probe
     private List<String> colors = new ArrayList<>(Arrays.asList("-fx-background-color:#B0E0E6;", "-fx-background-color:yellow;", "-fx-background-color:#CD5C5c;", "-fx-background-color:pink;", 
             "-fx-background-color:#ADFF2F;", "-fx-background-color:orange;", "-fx-background-color:#FFD700;", "-fx-background-color:#DDA0DD;", "-fx-background-color:AQUA;",
             "-fx-background-color:#87CEFA;", "-fx-background-color:#F5F5DC;", "-fx-background-color:BISQUE;", "-fx-background-color:brown;", "-fx-background-color:CORAL;"));
-    
-    private int colorIndex = 14;
-    
+        
     //probe table area
     @FXML
     private TableView<probeTableData> probeTable;
@@ -224,6 +220,9 @@ public class HomepageController implements Initializable {
         beadCol.setCellValueFactory(new PropertyValueFactory<bead,String>("RegionNumber"));
         analyteCol.setCellValueFactory(new PropertyValueFactory<bead,String>("Analyte"));
         
+        if(ModelForExperiments.getInstance().getExperimentsXMLFileMap().size() != 0) {
+            reload();
+        }
         /*
         if(ModelForExperiments.getInstance().getAnalytes()!=null) 
         {
@@ -235,6 +234,19 @@ public class HomepageController implements Initializable {
         //table.getColumns().addAll(firstNameCol, lastNameCol, emailCol);
         //setBeadsTable(1);
     } 
+    
+    private void reload() {
+        fileNames = ModelForExperiments.getInstance().getXMLFiles();
+        analytes = ModelForExperiments.getInstance().getAnalytes();
+        beadTable.setItems(analytes);
+        for(int i = 0; i < fileNames.size(); i++) {
+            filesList.getItems().add(fileNames.get(i));
+        }
+        mapOfExperiments = ModelForExperiments.getInstance().getExperimentsXMLFileMap();
+        experiments = ModelForExperiments.getInstance().getExperiments();
+        
+        updateExperimentsInfo();
+    }
     
     /*
     * this method initializes the choice box for switching between
@@ -412,7 +424,7 @@ public class HomepageController implements Initializable {
         }
     }
     
-    //read analystes from the first xml file and save it to data model. 
+    //read analytes from the first xml file and save it to data model. 
     private void getAnalytes(String filePath )
     {
         StAXParser parser = new StAXParser();
@@ -472,57 +484,75 @@ public class HomepageController implements Initializable {
 
     @FXML
     private void resetDataEvent(ActionEvent event) {
-        filesList.getItems().clear();
-        uploadFiles.setDisable(false);
+        try {
+            // uncheck checkboxes upon resetting
+            experimentComplete.setSelected(false);
+            plateComplete.setSelected(false);
+            filesList.getItems().clear();
+            uploadFiles.setDisable(false);
+            fileNames.clear();
+            
+            // xml files map clear previous data associated with xml files, do it in the set up experiment page
+            ModelForExperiments.getInstance().getExperimentModel().clear();
+            ModelForExperiments.getInstance().getXMLFiles().clear();
+            ModelForExperiments.getInstance().getExperimentsXMLFileMap().clear();
+            ModelForExperiments.getInstance().getExperiments().clear();
         
-        // xml files map clear previous data associated with xml files, do it in the set up experiment page
-        ModelForExperiments.getInstance().getXMLFiles().clear();
-        ModelForExperiments.getInstance().getExperimentsXMLFileMap().clear();
-        ModelForExperiments.getInstance().getExperiments().clear();
-        
-        //clear analytes table 
-        analytes.clear();
-        ModelForExperiments.getInstance().getAnalytes().clear();
-        beadTable.refresh();
-        
-        //clear choice box and other text
-        experiments.clear();
-        totalNumberOfExperiments.setText("0");
-        currentExperimentNumber.setText("");
-        XMLfilesNames.setText("");
-        curExperiment = -1;
-        ModelForExperiments.getInstance().setCurrentExperiment(curExperiment);
-        
-        // clear status table
-        status.clear();
-        beadPlateStatusTable.refresh();
-        
-        //clear probe tables
-        ModelForExperiments.getInstance().getProbeListForPopulate().clear();
-        probes.clear();
-        probeTable.refresh();
+            //clear analytes table 
+            analytes.clear();
+            ModelForExperiments.getInstance().getAnalytes().clear();
+            beadTable.refresh();
+
+            //clear choice box and other text
+            experiments.clear();
+            totalNumberOfExperiments.setText("0");
+            currentExperimentNumber.setText("0");
+            XMLfilesNames.setText("null");
+            curExperiment = -1;
+            curPlate = 0;
+            ModelForExperiments.getInstance().setCurrentExperiment(curExperiment);
+            ModelForExperiments.getInstance().setCurPlate(curPlate);
+
+            // clear status table
+            status.clear();
+            beadPlateStatusTable.refresh();
+
+            //clear probe tables
+            ModelForExperiments.getInstance().getProbeListForPopulate().clear();
+            probes.clear();
+            probeTable.refresh();
        
-        // clear user input
-       ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().clear();
-       clearUserInputForBeadPlate();
-       //clearUserInputForBeadPlate2();
-       //clearUserInputForBeadPlate3();
-       
-       //clear bead plate layout
-       clearLayout();     
-       
-       //clear median value data matrix 
-       ModelForExperiments.getInstance().getMedianValueMatrix().clear();
+            // clear user input
+            ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().clear();
+            clearUserInputForBeadPlate();
+            //clearUserInputForBeadPlate2();
+            //clearUserInputForBeadPlate3();
+
+            //clear bead plate layout
+            clearLayout();     
+
+            //clear median value data matrix 
+            ModelForExperiments.getInstance().getMedianValueMatrix().clear();
+        }
+        catch(NullPointerException e) {
+            System.out.println("No data to reset.");
+        }
     }
     
     // choice box listener for experiments dropdown
     public void itemChanged(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) 
     {
+        System.out.println("item changed");
         if(newValue == null)
             return;
         
         int val = (int)newValue; // curExperiment -1  e.g. 0
-        curExperiment = experiments.get(val - 1); // get current Experiment number e.g 1
+        try {
+            curExperiment = experiments.get(val - 1); // get current Experiment number e.g 1 
+        }
+        catch(IndexOutOfBoundsException e) {
+            System.out.println(e.getMessage());
+        }
         curPlate = 1; // default
         ModelForExperiments.getInstance().setCurPlate(curPlate);
         // change information on the top experiment area 
@@ -594,6 +624,8 @@ public class HomepageController implements Initializable {
     
     // choice box listener for bead plates dropdown
     public void plateChanged(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                System.out.println("plate changed");
+
         // consequence of resetting the plates choice box when switching experiments
         if(newValue == null) 
             return;
@@ -617,6 +649,7 @@ public class HomepageController implements Initializable {
 
     //update left upper experiments info after user upload xml files or manually set up xml files for experiments
     private void updateExperimentsInfo() throws NullPointerException {
+        System.out.println("update experiments");
         //display # of experiements
         int count = ModelForExperiments.getInstance().getNumberOfExperiments();
         totalNumberOfExperiments.setText(Integer.toString(count));
@@ -627,7 +660,7 @@ public class HomepageController implements Initializable {
         
         //experiments.clear();
         //experiments.addAll(experimentsNew);
-        if(experimentsNew == null) {
+        if(experimentsNew == null || experimentsNew.size() == 0) {
             throw new NullPointerException("Haven't selected files.");
         }
         
@@ -697,6 +730,7 @@ public class HomepageController implements Initializable {
 
     public void clearUserInputForBeadPlate()
     {
+        numSampleInput.clear();
         numReplicaInput.clear();
         sampleNamesInput.clear();
         numProbeInput.clear();
@@ -875,7 +909,7 @@ public class HomepageController implements Initializable {
     }
 
     @FXML
-    private void editBeadForPlate1Event(ActionEvent event) {
+    private void editBeadForPlateEvent(ActionEvent event) {
         if(curExperiment == -1)
         {
             ErrorMsg error = new ErrorMsg();
@@ -1044,7 +1078,10 @@ public class HomepageController implements Initializable {
     @FXML
     private void changeExperimentEvent(MouseEvent event) {
         // ensures user inputs save when switching between experiments
-        //checkLayoutEventHelper(); 
+        //checkLayoutEventHelper();
+        if(ModelForExperiments.getInstance().getExperimentModel().isEmpty()) {
+            return;
+        }
         displayBeadsPlateLayout(curExperiment);        
         displayProbeTable();
     }
@@ -1054,6 +1091,9 @@ public class HomepageController implements Initializable {
     private void changePlateEvent(MouseEvent event) {
         // ensures user inputs save when switching between plates of the same experiment
         //checkLayoutEventHelper();
+        if(ModelForExperiments.getInstance().getExperimentModel().isEmpty()) {
+            return;
+        }
         displayBeadsPlateLayout(curExperiment);        
         displayProbeTable();
     }

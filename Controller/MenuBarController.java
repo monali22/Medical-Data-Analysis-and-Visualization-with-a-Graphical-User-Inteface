@@ -185,9 +185,7 @@ public class MenuBarController implements Initializable {
         if(!checkModelComplete()) {
             return;
         }
-        else {
-            System.out.println("isExpComplete: " + ModelForExperiments.getInstance().getExperimentModel().get(1).isExpComplete);
-        }
+
         // need another if statement to check if all experiments have been confirmed
         /*
         if(false)

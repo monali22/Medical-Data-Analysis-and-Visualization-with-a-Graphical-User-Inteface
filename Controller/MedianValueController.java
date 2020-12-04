@@ -35,6 +35,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -314,22 +315,20 @@ public class MedianValueController implements Initializable {
            // GridPane.setMargin(label, new Insets(0));
         }
     }
-        
+     
     //helper function : calculate final median value for one Probe.
-    private  HashMap<Integer, Double>  calculateMedianValue(List<HashMap<Integer, Double>> wellsForCalculate) {
-      
+    private HashMap<Integer, Double>  calculateMedianValue(List<HashMap<Integer, Double>> wellsForCalculate) {
         HashMap<Integer, Double> finalMedianValueForOneProbe = new HashMap<>();
         //int temp = 0;
         for(int i = 0; i < analytes.size();i++)
         {
             int regionNumber = analytes.get(i).getRegionNumber();
-
             double sum = 0;
             //System.out.println("curEepriment is " + curExperiment + ". cur curSample is "  + curSample + ". cur RegionNumber is " + regionNumber);
             for(HashMap<Integer, Double> map : wellsForCalculate)
             {
                 //System.out.println(wellsForCalculate);;
-                //double data = map.get(regionNumber);
+                //double data = map.get(regionNumber);                
                 sum += map.get(regionNumber);
             }
             double finalMeidanValue = sum / wellsForCalculate.size();
@@ -344,7 +343,7 @@ public class MedianValueController implements Initializable {
     String directory = getInstance().getDirectory();
     List<String> files = getInstance().getExperimentsXMLFileMap().get(experimentPos);
     List<String> absolutePath = new ArrayList<>();
-    List<HashMap<Integer, HashMap<Integer,  Double>>> meidanValueData = new ArrayList<>();
+    List<HashMap<Integer, HashMap<Integer,  Double>>> medianValueData = new ArrayList<>();
     StAXParser parser = new StAXParser();
    // for(int i = files.size()-1 ; i >=0; i--) // the sequence should be backwards
     for(int i = 0 ; i < files.size(); i++) 
@@ -354,9 +353,9 @@ public class MedianValueController implements Initializable {
     
     for(int i = 0 ; i < absolutePath.size();i++) // 
     {
-        meidanValueData.add(parser.getMedianValueData(absolutePath.get(i), experimentPos, i));
+        medianValueData.add(parser.getMedianValueData(absolutePath.get(i), experimentPos, i));
     }
-     return meidanValueData;    
+     return medianValueData;    
 }    
     
     //helper function: get cells in a grid pane so tha
@@ -533,9 +532,12 @@ public class MedianValueController implements Initializable {
         int probePos = probeIndex;
         int samplePos = sampleIndex+1;
         int prevWells = probePos *(numberOfSamples * numberOfReplicas); // previous wells to get right number of wells to start
-        List< HashMap<Integer,  Double>>  wellsForCalculate = new ArrayList<>(); // wells that used for calcalute final meidan value 
+        List< HashMap<Integer,  Double>>  wellsForCalculate = new ArrayList<>(); // wells that used for calcalute final median value 
         samplePos = prevWells + samplePos; //  well of sample
         int wellNo = getWellNoInXmlFiles(samplePos);
+        if(dataMap.get(wellNo) == null) {
+            System.out.println("dataMap: " + dataMap.get(11));
+        }
         wellsForCalculate.add(dataMap.get(wellNo));
         for(int j = 1; j < numberOfReplicas; j++)
         {
@@ -543,10 +545,10 @@ public class MedianValueController implements Initializable {
             wellNo = getWellNoInXmlFiles(replicaPos);
             wellsForCalculate.add(dataMap.get(wellNo)); // well of relicas 
         }
-        
+
         getInstance().setOneProbeDataForMedianValueOriginalData(experimentPos, plateIndex, sampleIndex, wellsForCalculate);
+
         finalMedianValueForOneProbe = calculateMedianValue(wellsForCalculate); // get final median value data 
-        //System.out.println("curExperiment is " + curExperiment + ". curSample is " + curSample + ". cur plate is " + platePos + ". cur Probe is " + probePos);
         return finalMedianValueForOneProbe;
     }
     
