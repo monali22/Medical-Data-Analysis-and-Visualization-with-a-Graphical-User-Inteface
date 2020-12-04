@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 /**
  *
- * This class represents a single bead plate details.
+ * This class represents a single bead plate's details.
  */
 public class UserInputForBeadPlate {
     //private int  numberOfSamples;
@@ -33,7 +33,7 @@ public class UserInputForBeadPlate {
         probeList = new ArrayList<>(numberOfProbes);
     }
     
-    public  UserInputForBeadPlate(int replicas, String namesInput, String[] names, 
+    public UserInputForBeadPlate(int replicas, String namesInput, String[] names, 
             int probes, List<String> probeList)
     {
         super();
@@ -96,6 +96,9 @@ public class UserInputForBeadPlate {
         this.probeList=probeList;
     }
     
+    /*
+    * toString() method for debugging purposes
+    */
     @Override
     public String toString() {
         String inputInfo = "Number of Samples: " /*+ numberOfSamples*/;

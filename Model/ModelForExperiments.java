@@ -75,7 +75,7 @@ public class ModelForExperiments {
     private HashMap<Integer, List< HashMap<Integer, HashMap<Integer,   List<Integer>>>>> orginalXMLData = new HashMap<>();
     private HashMap<Integer, List<List<List<HashMap<Integer,Double>>>>> ANCMatrix = new HashMap<>();
    
-     // pass analyte, curPlate, curProbe when user click one meidan value to open a pop up page.
+     // pass analyte, curPlate, curProbe when user click one median value to open a pop up page.
     private bead curAnalyte;
     private int curPlate =0;
     private int curProbe =0;
@@ -221,7 +221,6 @@ public class ModelForExperiments {
       
    public void setUserInputsForOneExperiment( int experiment, HashMap<Integer, UserInputForBeadPlate> input)
    {
-       System.out.println("Num Plates: " + experimentModel.get(experiment).getNumPlates());
        for(int i = 0; i < experimentModel.get(experiment).getNumPlates(); i++) {
            try {
                 experimentModel.get(experiment).getBeadPlate(i + 1).setPlateDetails(input.get(i+ 1));
@@ -418,7 +417,7 @@ public class ModelForExperiments {
     }
     
     // replace xml file list for one experiment
-    public void seXMLfileListForOneExperiment(int experiment, List<String> list)
+    public void setXMLfileListForOneExperiment(int experiment, List<String> list)
     {
         XMLFileMap.put(experiment, list);
 
