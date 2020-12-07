@@ -36,9 +36,6 @@ public class Main extends Application {
         stage.show(); */
 
 
-
-
-
     URL menuBarUrl = getClass().getResource("/View/menuBar.fxml");
     MenuBar bar = FXMLLoader.load( menuBarUrl );         
                
@@ -53,7 +50,6 @@ public class Main extends Application {
 
    // scene.getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); //this works
     stage.setScene(scene);
-
 
     stage.show(); 
 

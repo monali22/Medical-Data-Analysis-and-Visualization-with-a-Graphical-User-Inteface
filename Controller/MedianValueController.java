@@ -34,6 +34,7 @@ import javafx.stage.Stage;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
@@ -162,7 +163,7 @@ public class MedianValueController implements Initializable {
             {
                 curSample = j;
                 RadioButton btn = new RadioButton();
-                btn.setText(samplesNames[j - 1]);
+                btn.setText(ModelForExperiments.getInstance().getExperimentModel().get(i).getNames()[j - 1]);
                 btn.setAlignment(Pos.CENTER);
                 if(group.getToggles().isEmpty())  // set the 1st button defalt to be selected 
                 {
@@ -185,7 +186,7 @@ public class MedianValueController implements Initializable {
        // platesGridPane.gridLinesVisibleProperty().set(true);
         
        // display sample name on the top of the table
-      UserInputForBeadPlate input = getInstance().getUserInputsForBeadPlateMap().get(curExperiment).get(1); // get the user input for 1st plate
+      Experiment input = getInstance().getExperimentModel().get(curExperiment); // get the user input for 1st plate
       String[] names = input.getNames();
         //String[] names = input.getNames();
       sampleName.setText(names[curSample -1]); // show sample name for the median value table
@@ -208,6 +209,7 @@ public class MedianValueController implements Initializable {
         HashMap<Integer, ObservableList<probeTableData>> probesListForCurExperiment = getInstance().getProbeMapForPopulate().get(curExperiment);
         int countsOfPlates = probesListForCurExperiment.size(); // initilize probelistForCurexperiment contains key=0 value, which is never used and is empty
         // display probes 
+
         int pos = 1; // for put plate 1/2 at the right position. 
         for(int i = 1; i <= countsOfPlates; i++)
         {
@@ -424,7 +426,7 @@ public class MedianValueController implements Initializable {
         }
         
         // we can't assume there are more than 1 bead plate for this experiment so we get sample names from first plate
-        samplesNames = experimentInfo.get(iIndex).getBeadPlate(1).getPlateDetails().getNames(); 
+        samplesNames = experimentInfo.get(iIndex).getNames(); 
         getInstance().setLargestSampleCount(res);
         getInstance().setMapOfSamplesNumbers(mapOfSamples);
         return res;
@@ -451,7 +453,7 @@ public class MedianValueController implements Initializable {
         getInstance().setCurPlate(plateIndexForPopUpPage);
         getInstance().setCurProbe(probeIndexForPopUpPage);
         getInstance().setNumberOfSamples(samples);
-        getInstance().setSampleNames(samplesNames);
+        //getInstance().setSampleNames(samplesNames);
         // open up the pop up page 
         URL url = Paths.get("./src/View/PopUpMedianValue.fxml").toUri().toURL();
          Parent root ;
@@ -474,7 +476,7 @@ public class MedianValueController implements Initializable {
     }
 
     private void calculateMedianValueMatrix() {
-         if(!getInstance().getMedianValueMatrix().isEmpty()) return;
+         if(!getInstance().getMedianValueMatrix().isEmpty()) getInstance().getMedianValueMatrix().clear();
          //CRASH wwhen experiments are not confirmed  
          
         for(int i = 1; i <=experiments;i++)
@@ -490,7 +492,6 @@ public class MedianValueController implements Initializable {
             {
                 System.out.println("inputs is empty ");
             }
-
             int numberOfPlates = inputs.size();
             //System.out.println("experiment is " + i ); // for debug
             for(int j = 0; j < numberOfPlates; j++)
@@ -535,9 +536,7 @@ public class MedianValueController implements Initializable {
         List< HashMap<Integer,  Double>>  wellsForCalculate = new ArrayList<>(); // wells that used for calcalute final median value 
         samplePos = prevWells + samplePos; //  well of sample
         int wellNo = getWellNoInXmlFiles(samplePos);
-        if(dataMap.get(wellNo) == null) {
-            System.out.println("dataMap: " + dataMap.get(11));
-        }
+        
         wellsForCalculate.add(dataMap.get(wellNo));
         for(int j = 1; j < numberOfReplicas; j++)
         {

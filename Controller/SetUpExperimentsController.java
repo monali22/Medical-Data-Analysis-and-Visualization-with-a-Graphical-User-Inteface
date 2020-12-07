@@ -95,6 +95,9 @@ public class SetUpExperimentsController implements Initializable {
     
     public void itemChanged(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
     {
+        if(newValue == null)
+            return;
+        
         int val = (int)newValue;
         curExperiment = experiments.get(val-1);
         curExperimentText.setText(String.valueOf(curExperiment));
@@ -196,6 +199,7 @@ public class SetUpExperimentsController implements Initializable {
         String file =  filesForOneExperimentListView.getSelectionModel().getSelectedItem();
         XMLFilesForOneExperiment.remove(file);
         ModelForExperiments.getInstance().getExperimentsXMLFileMap().get(curExperiment).remove(file);
+        ModelForExperiments.getInstance().initializeProbeListForPopulate();// update probe lists
     }
 
     @FXML

@@ -48,10 +48,6 @@ public class FoldChangeController implements Initializable {
     private GridPane platesGridPane;
     @FXML
     private ScrollPane spForFoldChange;
-    int largestSamples = 0;
-    int experiments = 0;
-    private  HashMap<Integer, List<Integer>> mapOfSamplesNumbers = new HashMap<>();
-    ObservableList<bead> analytes = FXCollections.observableArrayList();
     //List<List<Integer>> choosenSamples = new ArrayList<>(); 
     
     //ToggleGroup group = new ToggleGroup(); // For manage radio buttons for users to select. 
@@ -90,15 +86,11 @@ public class FoldChangeController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        experiments = ModelForExperiments.getInstance().getNumberOfExperiments();
-        largestSamples =  ModelForExperiments.getInstance().getLargestSampleCount();
-        mapOfSamplesNumbers = ModelForExperiments.getInstance().getMapOfSamplesNumbers();
-        analytes = ModelForExperiments.getInstance().getAnalytes();
-        sampleNames = ModelForExperiments.getInstance().getSampleNames();
+        //sampleNames = ModelForExperiments.getInstance().getSampleNames();
 
         
-        tableRow(experiments);    
-        tableCol(largestSamples);
+        tableRow(ModelForExperiments.getInstance().getNumberOfExperiments());    
+        tableCol(ModelForExperiments.getInstance().getLargestSampleCount());
         fillRadioButton();
         sp1.setContent(gridPane); // add scroll bars to the grid pane. 
         spForFoldChange.setContent(platesGridPane);
@@ -108,6 +100,7 @@ public class FoldChangeController implements Initializable {
     }
 
     // updates sample names from HomepageController.java
+    /*
     public void sampleNameRetriever(String[] names)
     {
         sampleNames = names;
@@ -117,6 +110,7 @@ public class FoldChangeController implements Initializable {
             System.out.println("Sample " + i + ": " + sampleNames[i]);
         }
     }
+    */
 
    //dynamically add rows for gridpane base on previous user input. 
     public  GridPane tableRow(int rows){
@@ -180,7 +174,7 @@ public class FoldChangeController implements Initializable {
     private void fillRadioButton() {
         
         // loop through each experiment
-        for(int i = 1; i <= experiments; i++)
+        for(int i = 1; i <= ModelForExperiments.getInstance().getNumberOfExperiments(); i++)
         {
             radioButtons.add(new ArrayList<RadioButton>()); // allocate space for a list of buttons
             
@@ -198,7 +192,7 @@ public class FoldChangeController implements Initializable {
                 RadioButton btn = new RadioButton(); // btn is for selecting a sample
                 btn.setDisable(true); // buttons should only be enabled when corresponding experiment button is selected
                 // sampleNameRetriever(sampleNames);
-                btn.setText(sampleNames[j - 1]); //TODO***********************************************
+                btn.setText(ModelForExperiments.getInstance().getExperimentModel().get(i).getNames()[j - 1]); //TODO***********************************************
                 btn.setAlignment(Pos.CENTER);
                        
                 // call this function when a sample radio button is clicked on
@@ -270,7 +264,7 @@ public class FoldChangeController implements Initializable {
                     * only if that experiment button is not currently selected. Otherwise, we enable
                     * the button.
                     */
-                    for(int i = 0; i < experiments; i++) {
+                    for(int i = 0; i < ModelForExperiments.getInstance().getNumberOfExperiments(); i++) {
                         
                         // if an experiment button is selected, we would enable corresponding sample buttons
                         if(experimentButtons.get(i).isSelected()) {
@@ -313,7 +307,7 @@ public class FoldChangeController implements Initializable {
     private int getLargestSampleCountForOneExperiment(int i ) {
         int res = 0;
         //initilizeMapOfSample(); 
-        for(Integer n : mapOfSamplesNumbers.get(i))
+        for(Integer n : ModelForExperiments.getInstance().getMapOfSamplesNumbers().get(i))
         {
             res = Math.max(res, n);
         }
@@ -326,8 +320,8 @@ public class FoldChangeController implements Initializable {
         int sampleIndex1 = gridPane.getColumnIndex(selectedRBs.get(0)) -1;
         int experimementPos2 = gridPane.getRowIndex(selectedRBs.get(1));
         int sampleIndex2 = gridPane.getColumnIndex(selectedRBs.get(1)) -1;
-        sample1 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos1).get(1).getNames()[sampleIndex1];
-        sample2 = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experimementPos2).get(1).getNames()[sampleIndex2];
+        sample1 = ModelForExperiments.getInstance().getExperimentModel().get(experimementPos1).getNames()[sampleIndex1];
+        sample2 = ModelForExperiments.getInstance().getExperimentModel().get(experimementPos2).getNames()[sampleIndex2];
        // display sample name on the top of the table
        sample1Name.setText("Experiment " + Integer.toString(gridPane.getRowIndex(selectedRBs.get(0))) + " " + sample1 + ", ");
        sample2Name.setText("Experiment " + Integer.toString(gridPane.getRowIndex(selectedRBs.get(1))) + " " + sample2);
@@ -335,18 +329,15 @@ public class FoldChangeController implements Initializable {
       foldChangeMatrix = calculateFoldChange(experimementPos1,sampleIndex1,experimementPos2,sampleIndex2);
       
       platesGridPane.getChildren().clear();
-        
-       
-
-       
+         
         //diaply analyte information on the 1st colomn
-        for(int i = 1; i <= analytes.size();i++)
+        for(int i = 1; i <= ModelForExperiments.getInstance().getAnalytes().size();i++)
         {
             //set width for cells of the cols
             ColumnConstraints column = new ColumnConstraints(70);
             platesGridPane.getColumnConstraints().add(column);            
             Label label = new Label();
-            String s = analytes.get(i-1).getAnalyte() + "(" + analytes.get(i-1).getRegionNumber() + ")";
+            String s = ModelForExperiments.getInstance().getAnalytes().get(i-1).getAnalyte() + "(" + ModelForExperiments.getInstance().getAnalytes().get(i-1).getRegionNumber() + ")";
             label.setText(s);    
             label.autosize();
             platesGridPane.add(label,0,i+1);
@@ -361,7 +352,6 @@ public class FoldChangeController implements Initializable {
         int pos = 1; // for put plate 1/2 at the right position. 
         for(int i = 1; i <= plates; i++)
         {
-            System.out.println("Plate #" + i);
             //set width for cells of the cols
             ColumnConstraints column = new ColumnConstraints(70);
             platesGridPane.getColumnConstraints().add(column);                
@@ -375,7 +365,6 @@ public class FoldChangeController implements Initializable {
             ObservableList<probeTableData> probes = ModelForExperiments.getInstance().getProbeListForPopulate(experimementPos1, i);
             for(int j = 0 ; j < probes.size();j++)
             {
-                System.out.println("Probe #" + j);
                 platesGridPane.getColumnConstraints().add(column);    
                 Label label1  = new Label();
                 s = probes.get(j).getProbeForPlate(); // get probe's name (analyte)
@@ -392,28 +381,27 @@ public class FoldChangeController implements Initializable {
  
 
     //helper function to get fold change matrix
-    private List<List<HashMap<Integer, Double>>> calculateFoldChange(int experimementPos1, int sampleIndex1, int experimementPos2, int sampleIndex2) {
-
+    private List<List<HashMap<Integer, Double>>> calculateFoldChange(int experimentPos1, int sampleIndex1, int experimentPos2, int sampleIndex2) {
+        
        List<HashMap<Integer,Double>> mv1ForOnePlate = new ArrayList<>();
-       List<HashMap<Integer,Double>>  mv2ForOnePlate  = new ArrayList<>();
-       
-       
+       List<HashMap<Integer,Double>>  mv2ForOnePlate  = new ArrayList<>();       
        
       List<List<HashMap<Integer,Double>>> foldChange = new ArrayList<>();
-      plates = Math.min(ModelForExperiments.getInstance().getMedianValueMatrix().get(experimementPos1).size(), 
-              ModelForExperiments.getInstance().getMedianValueMatrix().get(experimementPos2).size()); //get the samller size of plates 
-      probes = getSamllestProbes(experimementPos1,experimementPos2,plates);
+      plates = Math.min(ModelForExperiments.getInstance().getMedianValueMatrix().get(experimentPos1).size(), 
+              ModelForExperiments.getInstance().getMedianValueMatrix().get(experimentPos2).size()); //get the samller size of plates 
+      System.out.println("Plates: " + plates);
+      probes = getSamllestProbes(experimentPos1,experimentPos2,plates);
        for(int i = 0; i < plates; i++)
        {
            List<HashMap<Integer,Double>> plate = new ArrayList<>();
-           mv1ForOnePlate = ModelForExperiments.getInstance().getMedianValueMatrix().get(experimementPos1).get(i).get(sampleIndex1);
-           mv2ForOnePlate = ModelForExperiments.getInstance().getMedianValueMatrix().get(experimementPos2).get(i).get(sampleIndex2);
+           mv1ForOnePlate = ModelForExperiments.getInstance().getMedianValueMatrix().get(experimentPos1).get(i).get(sampleIndex1);
+           mv2ForOnePlate = ModelForExperiments.getInstance().getMedianValueMatrix().get(experimentPos2).get(i).get(sampleIndex2);
            for(int k = 0; k< probes; k++)
            {
                 HashMap<Integer,Double>  probe = new HashMap<>();
-                for(int j = 0; j <analytes.size();j++)
+                for(int j = 0; j <ModelForExperiments.getInstance().getAnalytes().size();j++)
                 {
-                    int regionNumber = analytes.get(j).getRegionNumber();
+                    int regionNumber = ModelForExperiments.getInstance().getAnalytes().get(j).getRegionNumber();
                     double mv1 = mv1ForOnePlate.get(k).get(regionNumber);
                     double mv2 = mv2ForOnePlate.get(k).get(regionNumber);                   
                     double fc = Math.log(mv1ForOnePlate.get(k).get(regionNumber)) / Math.log(2)  - Math.log(mv2ForOnePlate.get(k).get(regionNumber)) / Math.log(2);
@@ -427,16 +415,16 @@ public class FoldChangeController implements Initializable {
        }
        // Only store the requested fold change plates
        //TODO: make this more flexible by asking users to input which combinations they want 
-       if(experimementPos1 == experimementPos2){
-               if(experimementPos1 == 1 && ((sampleIndex1 == 0 && sampleIndex2 ==2) || (sampleIndex1 == 2 && sampleIndex2 == 0))){
-                   ModelForExperiments.getInstance().setFoldChangeMatrixforANC(experimementPos1,foldChange); 
+       if(experimentPos1 == experimentPos2){
+               if(experimentPos1 == 1 && ((sampleIndex1 == 0 && sampleIndex2 ==2) || (sampleIndex1 == 2 && sampleIndex2 == 0))){
+                   ModelForExperiments.getInstance().setFoldChangeMatrixforANC(experimentPos1,foldChange); 
                    //getfoldChange.put(experimementPos1, foldChange);
-               }else if(experimementPos1 == 2 && ((sampleIndex1 == 0 && sampleIndex2 ==2) || (sampleIndex1 == 2 && sampleIndex2 == 0)) ) {
-                   ModelForExperiments.getInstance().setFoldChangeMatrixforANC(experimementPos1,foldChange);
-               }else if(experimementPos1 == 3 && ((sampleIndex1 == 1 && sampleIndex2 ==3) || (sampleIndex1 == 3 && sampleIndex2 == 1))){
-                   ModelForExperiments.getInstance().setFoldChangeMatrixforANC(experimementPos1,foldChange);
-               }else if(experimementPos1 == 4 && ((sampleIndex1 == 1 && sampleIndex2 ==3) || (sampleIndex1 == 3 && sampleIndex2 == 1))){
-                   ModelForExperiments.getInstance().setFoldChangeMatrixforANC(experimementPos1,foldChange);
+               }else if(experimentPos1 == 2 && ((sampleIndex1 == 0 && sampleIndex2 ==2) || (sampleIndex1 == 2 && sampleIndex2 == 0)) ) {
+                   ModelForExperiments.getInstance().setFoldChangeMatrixforANC(experimentPos1,foldChange);
+               }else if(experimentPos1 == 3 && ((sampleIndex1 == 1 && sampleIndex2 ==3) || (sampleIndex1 == 3 && sampleIndex2 == 1))){
+                   ModelForExperiments.getInstance().setFoldChangeMatrixforANC(experimentPos1,foldChange);
+               }else if(experimentPos1 == 4 && ((sampleIndex1 == 1 && sampleIndex2 ==3) || (sampleIndex1 == 3 && sampleIndex2 == 1))){
+                   ModelForExperiments.getInstance().setFoldChangeMatrixforANC(experimentPos1,foldChange);
                }
        }
        
@@ -473,7 +461,7 @@ public class FoldChangeController implements Initializable {
         int pos = preProbes + (probeIndex +1); 
         
        // final TextField[] textfields = new TextField[analytes.size()]; 
-        for(int i = 1; i <= analytes.size();i++)
+        for(int i = 1; i <= ModelForExperiments.getInstance().getAnalytes().size();i++)
         {
             //set width for cells of the cols
             ColumnConstraints column = new ColumnConstraints(70);
@@ -481,7 +469,7 @@ public class FoldChangeController implements Initializable {
             Label label = new Label();
             platesGridPane.setRowIndex(label, i);
             platesGridPane.setColumnIndex(label,probeIndex);
-            double foldChange = data.get(analytes.get(i-1).getRegionNumber());
+            double foldChange = data.get(ModelForExperiments.getInstance().getAnalytes().get(i-1).getRegionNumber());
             label.setText(Double.toString(foldChange));   
             colorCode(label,foldChange,cutOff);
             label.autosize();            
@@ -548,9 +536,9 @@ public class FoldChangeController implements Initializable {
         int pos = preProbes + (probeIndex +1); 
         
        // final TextField[] textfields = new TextField[analytes.size()]; 
-        for(int i = 1; i <= analytes.size();i++)
+        for(int i = 1; i <= ModelForExperiments.getInstance().getAnalytes().size();i++)
         {
-            double foldChange = data.get(analytes.get(i-1).getRegionNumber());
+            double foldChange = data.get(ModelForExperiments.getInstance().getAnalytes().get(i-1).getRegionNumber());
             Label label = (Label) platesGridPane.getChildren().get(i+1);
             colorCode(label,foldChange,defaultCutOffValue);
             label.autosize();            

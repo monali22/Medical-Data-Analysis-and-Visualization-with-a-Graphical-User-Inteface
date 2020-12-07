@@ -204,7 +204,7 @@ public class PopUpMedianValueController implements Initializable {
                 medianValue = ModelForExperiments.getInstance().getMedianValueMatrix().get(experiment).get(plateIndex).get(i).get(probeIndex).get(analyteRegionNumber);
                 
                 //get sample name, if sample does not exisit, print nothing. 
-                String[] samples = ModelForExperiments.getInstance().getUserInputsForBeadPlateMap().get(experiment).get(plateIndex).getNames();
+                String[] samples = ModelForExperiments.getInstance().getExperimentModel().get(experiment).getNames();
                 if(samples.length < i+1) 
                     continue;
                 else 

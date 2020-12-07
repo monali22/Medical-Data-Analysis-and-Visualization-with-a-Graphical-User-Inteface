@@ -25,6 +25,10 @@ import java.util.ResourceBundle;
  * FXML Controller class
  *
  * @author feiping
+ * 
+ * The MenuBarController class handles the navigation
+ * from one menu to another, and ensures the ModelForExperiments 
+ * passes the necessary checks to switch menus.
  */
 public class MenuBarController implements Initializable {
 
@@ -159,6 +163,24 @@ public class MenuBarController implements Initializable {
     }
 
     /*
+    * precondition: the user has tried to naviagate away
+    * from the Input menu.
+    * postcondition: this method checks if the user has selected
+    * xml files in the Input menu, if not, it will show an error 
+    * message. 
+    * User should not be able to leave input menu until this method
+    * returns true.
+    */
+    public boolean isModelSet() {
+        if (ModelForExperiments.getInstance().getExperiments() == null || ModelForExperiments.getInstance().getExperiments().isEmpty()) {
+            ErrorMsg error = new ErrorMsg();
+            error.showError("Please set up experiments first!");
+            return false;
+        }
+        return true;
+    }
+    
+    /*
     * precondition: the user has tried to navigate away from
     * the Input menu.
     * postcondition: this method checks if all experiments have
@@ -182,19 +204,11 @@ public class MenuBarController implements Initializable {
             return;
         }
         
-        if(!checkModelComplete()) {
-            return;
-        }
+        // check if experiment data is stored and if all experiments are confirmed
+        if(!isModelSet()) return;
+        
+        if(!checkModelComplete()) return;
 
-        // need another if statement to check if all experiments have been confirmed
-        /*
-        if(false)
-        {
-             ErrorMsg error = new ErrorMsg();
-            error.showError("Please confirm all experiments first!");
-            return;
-        }
-         */
         try {
 
             URL paneTwoUrl = getClass().getResource("/View/MedianValue.fxml");
@@ -209,7 +223,16 @@ public class MenuBarController implements Initializable {
     }
 
     private void switchToFoldChange() {
+        
+        if(ModelForExperiments.getInstance().getMapOfSamplesNumbers() == null || ModelForExperiments.getInstance().getMapOfSamplesNumbers().isEmpty()) {
+            ErrorMsg error = new ErrorMsg();
+            error.showError("Must calculate median value first!");
+            return;
+        }
 
+        // check if experiment data is stored and if all experiments are confirmed
+        if(!isModelSet()) return;
+        
         if(!checkModelComplete()) return;
         
         try {
@@ -227,6 +250,15 @@ public class MenuBarController implements Initializable {
 
     private void switchToANC() {
 
+        if(ModelForExperiments.getInstance().getMapOfSamplesNumbers() == null || ModelForExperiments.getInstance().getMapOfSamplesNumbers().isEmpty()) {
+            ErrorMsg error = new ErrorMsg();
+            error.showError("Must calculate median value first!");
+            return;
+        }
+        
+        // check if experiment data is stored and if all experiments are confirmed    
+        if(!isModelSet()) return;
+        
         if(!checkModelComplete()) return;
         
         try {
