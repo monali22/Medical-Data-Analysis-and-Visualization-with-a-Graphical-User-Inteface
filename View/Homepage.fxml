@@ -221,7 +221,7 @@
                               <Text layoutX="17.0" layoutY="13.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Input data here for bead plates:" />
                               <TextField fx:id="numReplicaInput" layoutX="73.0" layoutY="134.0" prefHeight="26.0" prefWidth="150.0" />
                               <Text layoutX="5.0" layoutY="183.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Probes" />
-                              <TextField fx:id="numSampleInput" layoutX="73.0" layoutY="96.0" prefHeight="26.0" prefWidth="150.0" />
+                              <Text fx:id="numSampleInput" fill="BLUE" layoutX="83.0" layoutY="116.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
                               <TextField fx:id="sampleNamesInput" layoutX="73.0" layoutY="205.0" prefHeight="34.0" prefWidth="150.0" />
                               <TextField fx:id="numProbeInput" layoutX="73.0" layoutY="169.0" prefHeight="26.0" prefWidth="150.0" />
                               <JFXButton fx:id="checkLayout" layoutX="68.0" layoutY="257.0" onAction="#checkLayoutEvent" prefHeight="34.0" prefWidth="115.0" stylesheets="@inputData.css" text="Confirm Change">
