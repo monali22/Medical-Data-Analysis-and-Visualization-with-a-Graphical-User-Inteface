@@ -64,7 +64,7 @@ public class ModelForExperiments {
     Analyte1 
     Analyte2
     */
-    HashMap<Integer, List<List<List<HashMap<Integer,Double>>>>> meidanValueMatrix = new HashMap<>();
+    HashMap<Integer, List<List<List<HashMap<Integer,Double>>>>> medianValueMatrix = new HashMap<>();
     
     // has orginal median value data for each wells. 
     //List<HashMap<Integer,Double>> contains orignal meidan value data of each wells 
@@ -257,7 +257,12 @@ public class ModelForExperiments {
         return userInputsForExperiment;
     }
     
-    //initialize probe list map after user upload xml files or manually set up experiments. 
+    /*
+    * method for initializing the experiment model.
+    * should be called whenever the xml file map is 
+    * altered, this is because we need to set the number
+    * of experiments and plates in each experiment accordingly.
+    */
     public void initializeProbeListForPopulate()
     {
         //if not empty clear it first. (for manually set up experiments) 
@@ -348,8 +353,6 @@ public class ModelForExperiments {
     }
     
     public void addOneUserInputForPopulate(int experiment, int plate, UserInputForBeadPlate input) {
-        //System.out.println("Experiment: " + experiment + ". Plate: " + plate);
-        //System.out.println(input);
         experimentModel.get(experiment).getBeadPlate(plate).setPlateDetails(input);
     }
     
@@ -429,40 +432,41 @@ public class ModelForExperiments {
     
     public HashMap<Integer, List<List<List<HashMap<Integer,Double>>>>>    getMedianValueMatrix()
     {
-        return meidanValueMatrix;
+        return medianValueMatrix;
     }
     
-    public void setMedianValueMatrix(HashMap<Integer, List<List<List<HashMap<Integer,Double>>>>> meidanValueMatrix)
+    public void setMedianValueMatrix(HashMap<Integer, List<List<List<HashMap<Integer,Double>>>>> medianValueMatrix)
     {
-        this.meidanValueMatrix = meidanValueMatrix;
+        this.medianValueMatrix = medianValueMatrix;
     }   
 
     //experiment starts from 1, sampleIndex, PlateIndex, probeIndex start from 0
     public  void setOneProbeDataForMedianValue(int experimentPos, int plateIndex,  int sampleIndex,  HashMap<Integer,Double> meidanValueDataForOneProbe)
     {
         // when median value matrix is empty, initialize it. 
-        if(meidanValueMatrix.isEmpty() || !meidanValueMatrix.containsKey(experimentPos) ) 
+        if(medianValueMatrix.isEmpty() || !medianValueMatrix.containsKey(experimentPos) ) 
         {
             List<List<List<HashMap<Integer,Double>>>> experiment= new ArrayList<>();
-            meidanValueMatrix.put(experimentPos, experiment);
+            medianValueMatrix.put(experimentPos, experiment);
         }
-        if(meidanValueMatrix.get(experimentPos).isEmpty() || meidanValueMatrix.get(experimentPos).size() < (plateIndex+1))
+        if(medianValueMatrix.get(experimentPos).isEmpty() || medianValueMatrix.get(experimentPos).size() < (plateIndex+1))
         {
             List<List<HashMap<Integer,Double>>> plate = new ArrayList<>();
-            meidanValueMatrix.get(experimentPos).add(plate);
+            medianValueMatrix.get(experimentPos).add(plate);
         }
-        if(meidanValueMatrix.get(experimentPos).get(plateIndex).isEmpty() || meidanValueMatrix.get(experimentPos).get(plateIndex).size() < (sampleIndex+1))
+        if(medianValueMatrix.get(experimentPos).get(plateIndex).isEmpty() || medianValueMatrix.get(experimentPos).get(plateIndex).size() < (sampleIndex+1))
         {
             List<HashMap<Integer,Double>> sample = new ArrayList<>();
-            meidanValueMatrix.get(experimentPos).get(plateIndex).add(sample);
+            medianValueMatrix.get(experimentPos).get(plateIndex).add(sample);
         }
         //sample starts from 1. sampleIndex = sample -1;  //plate starts from 1. plateIndex = plate -1;
-        meidanValueMatrix.get(experimentPos).get(plateIndex).get(sampleIndex).add(meidanValueDataForOneProbe);
+        medianValueMatrix.get(experimentPos).get(plateIndex).get(sampleIndex).add(meidanValueDataForOneProbe);
     }   
     
     public HashMap<Integer,Double> getOneProbeDataForMedianValue(int experimentPos, int plateIndex,  int sampleIndex, int probeIndex)
     {
-        return meidanValueMatrix.get(experimentPos).get(plateIndex).get(sampleIndex).get(probeIndex);
+        //System.out.println("matrix size: " + medianValueMatrix.get(experimentPos).size());
+        return medianValueMatrix.get(experimentPos).get(plateIndex).get(sampleIndex).get(probeIndex);
     }
 
     
@@ -554,6 +558,8 @@ public class ModelForExperiments {
     {
         this.curSample = curSample;
     }
+    
+    
     public String[]  getSampleNames()
     {
         return sampleNames;
@@ -563,6 +569,7 @@ public class ModelForExperiments {
     {
         this.sampleNames = sampleNames;
     }
+    
     public int getLargestSampleCount()
     {
         return largestSampleCount;

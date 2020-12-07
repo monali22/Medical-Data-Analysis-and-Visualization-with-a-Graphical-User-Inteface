@@ -15,11 +15,15 @@ import java.util.*;
 public class Experiment {
     private Map<Integer, BeadPlate> beadPlates;
     private int numSamples;
+    private String namesInput;
+    private String[] names;
     public boolean isExpComplete; // used to check if plate data is stored in ModelForExperiments.java
     
     public Experiment() {
         beadPlates = new HashMap<>();
-        numSamples = 4;
+        namesInput = "WC, WK, KC, KK";
+        names = namesInput.split(",");
+        numSamples = names.length;
         isExpComplete = false;
     }
     
@@ -51,9 +55,20 @@ public class Experiment {
         return numSamples;
     }
     
-    public void setSamples(int samples) {
-        this.numSamples = samples;
+    public void setSamples(String samples) {
+        this.namesInput = samples;
+        names = namesInput.split(",");
+        numSamples = names.length;
     }
+    
+    public String getNameInput()
+    {
+        return this.namesInput;
+    }
+    public String[] getNames()
+    {
+        return this.names;
+    }       
     
     public int getNumPlates() {
         return beadPlates.size();
