@@ -117,7 +117,7 @@ public class HomepageController implements Initializable {
     private int curExperiment = -1; //initiliaze to -1.
     private int curPlate = 0; //initiliaze to 0.
     @FXML
-    private Button setUpExperiments; // click to open a new page to edit xml files for each experiment.
+    private Button setUpExperiments; // press to open a new page to edit xml files for each experiment.
  
     @FXML
     private CheckBox experimentComplete = new CheckBox();
@@ -362,7 +362,7 @@ public class HomepageController implements Initializable {
     }
    
     /*
-    * this method is called when the user clicks the 'Select'
+    * this method is called when the user presses the 'Select'
     * button. deals with taking in the input xml files.
     */
     @FXML
@@ -486,6 +486,7 @@ public class HomepageController implements Initializable {
     }
     
 
+    // called when the 'Reset' button is pressed
     @FXML
     private void resetDataEvent(ActionEvent event) {
         try {
@@ -495,19 +496,22 @@ public class HomepageController implements Initializable {
             filesList.getItems().clear();
             uploadFiles.setDisable(false);
             fileNames.clear();
-            
+
             // xml files map clear previous data associated with xml files, do it in the set up experiment page
             ModelForExperiments.getInstance().getExperimentModel().clear();
             ModelForExperiments.getInstance().getXMLFiles().clear();
             ModelForExperiments.getInstance().getExperimentsXMLFileMap().clear();
+            
+            // clear choice box for experiment and plate
             ModelForExperiments.getInstance().getExperiments().clear();
-        
+            DropdownPlatesChoiceBox.getItems().clear();
+
             //clear analytes table 
             analytes.clear();
             ModelForExperiments.getInstance().getAnalytes().clear();
             beadTable.refresh();
 
-            //clear choice box and other text
+            //clear text
             totalNumberOfExperiments.setText("0");
             currentExperimentNumber.setText("0");
             XMLfilesNames.setText("null");
@@ -515,7 +519,7 @@ public class HomepageController implements Initializable {
             curPlate = 0;
             ModelForExperiments.getInstance().setCurrentExperiment(curExperiment);
             ModelForExperiments.getInstance().setCurPlate(curPlate);
-
+            
             // clear status table
             status.clear();
             beadPlateStatusTable.refresh();
@@ -649,7 +653,7 @@ public class HomepageController implements Initializable {
         if(experimentsNew == null || experimentsNew.size() == 0) {
             throw new NullPointerException("Haven't selected files.");
         }
-        
+
         DropdownExperimentsChoiceBox.setItems(experimentsNew);   
         int defaultExperiment = 1;
         DropdownExperimentsChoiceBox.setValue(defaultExperiment);
@@ -758,7 +762,7 @@ public class HomepageController implements Initializable {
         sampleNamesInput.setText(ModelForExperiments.getInstance().getExperimentModel().get(curExperiment).getNameInput()); 
     }
 
-    // called when user clicks on 'Confirm Change' button on UI 
+    // called when user presses the 'Confirm Change' button
     @FXML
     private void checkLayoutEvent(ActionEvent event) {
 
@@ -905,17 +909,20 @@ public class HomepageController implements Initializable {
         if(curExperiment == -1)
         {
             ErrorMsg error = new ErrorMsg();
-            error.showError("choose an Experiment first!");                   
+            error.showError("choose an Experiment first!");     
+            return;
         }
         if(numProbeInput.getText() == null || Integer.parseInt(numProbeInput.getText()) <=0 ) 
         {
             ErrorMsg error = new ErrorMsg();
-            error.showError("invalid input for number of probe!");           
+            error.showError("invalid input for number of probe!");  
+            return;
         }
         if(probes ==null || probes.size() == 0)
         {
             ErrorMsg error = new ErrorMsg();
-            error.showError("please load probe first!");                
+            error.showError("please load probe first!");   
+            return;
         }
         ModelForExperiments.getInstance().setCurPlate(1);
         loadAddBeadsPage();        
@@ -956,6 +963,7 @@ public class HomepageController implements Initializable {
             // load as many probes to table as inputted in the probes text field
             for(int i = 0; i < /*Integer.parseInt(numProbeInput.getText())*/ ModelForExperiments.getInstance().getUserInputsForOneExperiment(curExperiment).get(curPlate).getNumOfProbes();i++ )
             {
+                if(i >= probesToLoad.get(curPlate).size()) break; // text file has limit to how many probes are on each line, so we must account for this
                 probeTableData probe = probesToLoad.get(/*ModelForExperiments.getInstance().getCurPlate()*/ curPlate).get(i);
                 probesList.add(probe);
             }
@@ -1050,7 +1058,12 @@ public class HomepageController implements Initializable {
             ErrorMsg error = new ErrorMsg();
             error.showError("user input for Experiment is not correct format" + " number of probes is numbers only ");    
             return true;
-        }    
+        } 
+        if( Integer.parseInt(probes) > probesToLoad.get(plateNum).size()) {
+            ErrorMsg error = new ErrorMsg();
+            error.showError("number of probes exceeds amount available in text file!");
+            return true;
+        }
         int numberOfSamples = Integer.parseInt(samples);
         int numberOfReps = Integer.parseInt(reps);
         int numberOfProbes =  Integer.parseInt(probes);  
@@ -1066,7 +1079,7 @@ public class HomepageController implements Initializable {
         return false;
     }
 
-    // called when user clicks on the experiment choicebox.
+    // called when user presses the experiment choicebox.
     @FXML
     private void changeExperimentEvent(MouseEvent event) {
         // ensures user inputs save when switching between experiments
@@ -1078,7 +1091,7 @@ public class HomepageController implements Initializable {
         displayProbeTable();
     }
 
-    // called when user clicks on the plate choicebox.
+    // called when user presses the plate choicebox.
     @FXML
     private void changePlateEvent(MouseEvent event) {
         // ensures user inputs save when switching between plates of the same experiment

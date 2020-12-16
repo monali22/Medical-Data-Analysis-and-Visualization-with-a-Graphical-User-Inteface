@@ -389,7 +389,6 @@ public class FoldChangeController implements Initializable {
       List<List<HashMap<Integer,Double>>> foldChange = new ArrayList<>();
       plates = Math.min(ModelForExperiments.getInstance().getMedianValueMatrix().get(experimentPos1).size(), 
               ModelForExperiments.getInstance().getMedianValueMatrix().get(experimentPos2).size()); //get the samller size of plates 
-      System.out.println("Plates: " + plates);
       probes = getSamllestProbes(experimentPos1,experimentPos2,plates);
        for(int i = 0; i < plates; i++)
        {
