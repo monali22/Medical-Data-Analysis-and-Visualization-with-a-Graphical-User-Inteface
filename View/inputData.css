@@ -6,3 +6,20 @@
 .jfx-button:hover{
     -fx-background-color: #388E3C;
 }
+
+#btnss{
+    -fx-background-color: gray;
+    -fx-text-fill: white;
+    -fx-width: fit-content;
+}
+#anchSp1 {
+    -fx-background-color: pink;
+}
+
+#sp1 {
+    -fx-background-color: yellow;
+}
+
+#spsp1 {
+    -fx-background-color: chartreuse;
+}

@@ -104,7 +104,7 @@ public class MenuBarController implements Initializable{
             .text("CNA")
             .onAction(new EventHandler<ActionEvent>(){
                 @Override public void handle(ActionEvent t) {
-                    switchToMedianValue() ;
+                    switchToCNA();
              } 
 
 
@@ -214,7 +214,22 @@ public class MenuBarController implements Initializable{
         } catch (IOException e) {
           e.printStackTrace();
         }
-    }     
+    }
+
+    private void switchToCNA() {
+
+        try {
+
+            URL paneTwoUrl = getClass().getResource("/View/CNA.fxml");
+            AnchorPane paneTwo = FXMLLoader.load( paneTwoUrl );
+
+            BorderPane border = Main.getRoot();
+            border.setCenter(paneTwo);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
         
         
 }
