@@ -1,18 +1,12 @@
 package Model;
 
 
-import Util.ErrorMsg;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import Model.UserInputForBeadPlate;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -31,29 +25,27 @@ public class ModelForExperiments {
     
     //defalut probes to two types of experiment. put them in the model so that user can save the change for future experiments. 
     List<List<String>> ProbesForExperimentType1 = new ArrayList<>();
-     List<List<String>> defaultProbesForExperimentType2 = new ArrayList<>();
+    List<List<String>> defaultProbesForExperimentType2 = new ArrayList<>();
     
     
     private ObservableList<bead> analytes = FXCollections.observableArrayList();
-    //initial probes list
+    
+    //initial probes list: used in AddBeadsPageController.java
     private ObservableList<probeTableData> probesToLoad = FXCollections.observableArrayList();
     // private final static Context instance = new Context();
     private final static ModelForExperiments instance = new ModelForExperiments();
+    
     //probe data contains both bead class number(region number ) and analyte name.
-    private HashMap<Integer, HashMap<Integer,  ObservableList<bead>>> data = new HashMap<>(); 
+    //private HashMap<Integer, HashMap<Integer,  ObservableList<bead>>> data = new HashMap<>(); 
     
-    //proble data contains only analyte name and counts. created to pupoluate into the homepage proble tables
-    private HashMap<Integer, HashMap<Integer, ObservableList<probeTableData>>> probesListForPopulate = new HashMap<>();
-    
-    //user input data for each experiment 
-     HashMap<Integer, List<UserInputForBeadPlate>> userInputsForBeadPlateMap= new HashMap<>();
+    private HashMap<Integer, Experiment> experimentModel = new HashMap<>();
     
     private int currentExperiment;
     private int currentPlate;
-    private int numberOfExpriments; // total number of experiments
+    private int numberOfExperiments; // total number of experiments
     private List<String> fileNames = new ArrayList<>(); // xml files upload by users
     private Map<Integer, List<String>> XMLFileMap = new HashMap<>(); // xml files for each experiemnt, experiment nubmer is key.
-    private String  directory; //absolute  directory of xml files. 
+    private String directory; //absolute  directory of xml files. 
     private ObservableList<Integer> experiments; // for choice box display # of experiments 
     
     /* Median value page 
@@ -72,7 +64,7 @@ public class ModelForExperiments {
     Analyte1 
     Analyte2
     */
-    HashMap<Integer, List<List<List<HashMap<Integer,Double>>>>> meidanValueMatrix = new HashMap<>();
+    HashMap<Integer, List<List<List<HashMap<Integer,Double>>>>> medianValueMatrix = new HashMap<>();
     
     // has orginal median value data for each wells. 
     //List<HashMap<Integer,Double>> contains orignal meidan value data of each wells 
@@ -80,16 +72,16 @@ public class ModelForExperiments {
     //HashMap<Integer,  List<HashMap<Integer, HashMap<Integer,  Double>>>> medianValueOriginalData = new HashMap<>(); 
   
     //orgianl data from xml files. HashMap<Integer,List<Integer> contains data from one plate/xml file. List<Integer> are the reporter data from xml file. 
-     HashMap<Integer, List< HashMap<Integer, HashMap<Integer,   List<Integer>>>>> orginalXMLData = new HashMap<>();
-     HashMap<Integer, List<List<List<HashMap<Integer,Double>>>>> ANCMatrix = new HashMap<>();
+    private HashMap<Integer, List< HashMap<Integer, HashMap<Integer,   List<Integer>>>>> orginalXMLData = new HashMap<>();
+    private HashMap<Integer, List<List<List<HashMap<Integer,Double>>>>> ANCMatrix = new HashMap<>();
    
-     // pass analyte, curPlate, curProbe when user click one meidan value to open a pop up page.
+     // pass analyte, curPlate, curProbe when user click one median value to open a pop up page.
     private bead curAnalyte;
     private int curPlate =0;
     private int curProbe =0;
     private int curSample = 0;
     private int numberOfSamples = 0;
-    private String[] sampleNames;
+    private static String[] sampleNames;
     
     
     //Fold change Page
@@ -105,7 +97,8 @@ public class ModelForExperiments {
     {
             // pass the path to the file as a parameter
         String currentLocation = System.getProperty("user.dir").toString();
-        File file =new File( "/Users/kuldeep/Documents/CSS600/Medical-Data-Analysis-and-Visualization-with-a-Graphical-User-Inteface/Controller/probes1.txt"); //tODO: Change File location and name
+        System.out.println("currLoc: "+ currentLocation);
+        File file =new File( currentLocation +"\\probes1.txt"); //tODO: Change File location and name
         Scanner sc = new Scanner(file); 
         while (sc.hasNextLine())
         {
@@ -119,7 +112,7 @@ public class ModelForExperiments {
     {
             // pass the path to the file as a parameter
         String currentLocation = System.getProperty("user.dir").toString();
-        File file =new File( "/Users/kuldeep/Documents/CSS600/Medical-Data-Analysis-and-Visualization-with-a-Graphical-User-Inteface/Model/probes2.txt"); //tODO: Change File location and name
+        File file =new File( currentLocation +"\\probes2.txt"); //tODO: Change File location and name
         Scanner sc = new Scanner(file); 
         while (sc.hasNextLine())
         {
@@ -129,6 +122,12 @@ public class ModelForExperiments {
         }
         sc.close();
     }
+    
+    public HashMap<Integer, Experiment> getExperimentModel() {
+        //return new HashMap(experimentModel);
+        return experimentModel;
+    }
+    
     public List<List<String>>  getProbesForPlate2() throws FileNotFoundException
     {
         if(defaultProbesForExperimentType2.isEmpty())
@@ -168,30 +167,33 @@ public class ModelForExperiments {
         return currentPlate;
     }
     
-    public void setCurPlate(int plate)
+    public void setCurPlate(Integer plate)
     {
         currentPlate = plate;
     }
+    
+    // method called in AddBeadsPageController.java
+     public ObservableList<probeTableData>  getProbesForLoad( )
+   {
+       generateBeadsToLoad(); // helper method
+       return probesToLoad;
+   }
+    
    public void setProbesForLoad(ObservableList<probeTableData> probesToLoad )
    {
        this.probesToLoad = probesToLoad;
    }
-    public ObservableList<probeTableData>  getProbesForLoad( )
-   {
-       generateBeadsToLoad();
-       return probesToLoad;
-   }
    
+   // helper method for getProbesForLoad()
     private void generateBeadsToLoad()
-{
-    probesToLoad.add(new probeTableData(1, "TCR"));
-     probesToLoad.add(new probeTableData(2, "CD"));
-      probesToLoad.add(new probeTableData(3, "LAT"));
-       probesToLoad.add(new probeTableData(4, "ZAP"));
-       probesToLoad.add(new probeTableData(5, "SLP"));
-
-
-}
+    {
+        probesToLoad.add(new probeTableData(1, "TCR"));
+        probesToLoad.add(new probeTableData(2, "CD"));
+        probesToLoad.add(new probeTableData(3, "LAT"));
+        probesToLoad.add(new probeTableData(4, "ZAP"));
+        probesToLoad.add(new probeTableData(5, "SLP"));
+    }
+    
    public void swap(int experiment, int index1, int index2) {
         String s1 = XMLFileMap.get(experiment).get(index1);
         String s2 = XMLFileMap.get(experiment).get(index2);
@@ -199,104 +201,128 @@ public class ModelForExperiments {
         XMLFileMap.get(experiment).set(index1, s2);  
     }
    
-   public void setUserInputsForBeadPlateMap( HashMap<Integer, List<UserInputForBeadPlate>> userInputsForBeadPlateMap)
+   public void setUserInputsForBeadPlateMap( HashMap<Integer, HashMap<Integer, UserInputForBeadPlate>> userInputsForBeadPlateMap)
    {
-       this.userInputsForBeadPlateMap = userInputsForBeadPlateMap;
+       for(int i = 0; i < experimentModel.size(); i++ ) { // iterate through each experiment
+           for(int j = 0; j < experimentModel.get(i + 1).getNumPlates(); j++) { // iterate through each bead plate
+               try {
+                    experimentModel.get(i + 1).getBeadPlate(j + 1).setPlateDetails(userInputsForBeadPlateMap.get(i + 1).get(j + 1));
+               }
+               catch(IndexOutOfBoundsException e) {
+                   System.out.println("Input map doesn't match size of experiment model.");
+               }
+               finally {
+                   break; // iterate to next experiment
+               }
+           }
+       }
+       //this.userInputsForBeadPlateMap = userInputsForBeadPlateMap;
+       
    }
       
-   public void setUserInputsForOneExperiment( int experiment, List<UserInputForBeadPlate> input)
+   public void setUserInputsForOneExperiment( int experiment, HashMap<Integer, UserInputForBeadPlate> input)
    {
-       userInputsForBeadPlateMap.put(experiment, input);
-   }
-   
-    public HashMap<Integer, List<UserInputForBeadPlate>>  getUserInputsForBeadPlateMap( )
-   {
-       return userInputsForBeadPlateMap;
-   }
-    
-
-   
-    public HashMap<Integer,  HashMap<Integer,ObservableList<bead>>> getData()
-    {
-        return data;
-    }
-    
-    //initilize probe list map after user upload xml files or manually set up experiments. 
-   public void initilizeProbeListForPopulate()
-   {
-       //if not empty clear it first. (for manually set up experiments)
-       if(!probesListForPopulate.isEmpty()) 
-           probesListForPopulate.clear();
-       if(XMLFileMap.isEmpty()){
-           
-           System.out.println("XML MAP IS EMPTY!!!!!!!!!!!!!!!!!!");
-       }
-       for(int i = 1; i <=numberOfExpriments; i++ )
-       {
-            HashMap<Integer, ObservableList<probeTableData>> probesList = new HashMap<>();
-            for( int j =0; j < XMLFileMap.get(i).size();j++)
-            {
-                ObservableList<probeTableData> list =  FXCollections.observableArrayList();
-                probesList.put(j, list);
+       for(int i = 0; i < experimentModel.get(experiment).getNumPlates(); i++) {
+           try {
+                experimentModel.get(experiment).getBeadPlate(i + 1).setPlateDetails(input.get(i+ 1));
+           }
+           catch(IndexOutOfBoundsException e) {
+                   System.out.println("Input map doesn't match size of experiment model.");
+           }
+           finally {
+                   break; // iterate to next experiment
             }
-            probesListForPopulate.put(i,  probesList);           
-       }
-   }
-    //set probles in to the hashtable that holds probes data for each experiment and each bead plate. 
-    public void setProbes(int experiement, int beadPlate, ObservableList<bead> probes)
-    {
-        if(!data.containsKey(experiement))
-        {
-            data.put(experiement, new HashMap<Integer,ObservableList<bead>>());
         }
-           ObservableList<bead> tobe =  FXCollections.observableArrayList(probes);
-           //ObservableList<bead> experimentBeads = FXCollections.observableArrayList();
-            data.get(experiement).put(beadPlate, tobe);           
+   }
+   
+    public HashMap<Integer, HashMap<Integer, UserInputForBeadPlate>>  getUserInputsForBeadPlateMap( )
+    {
+        HashMap<Integer, HashMap<Integer, UserInputForBeadPlate>> userInputsForBeadPlateMap = new HashMap<>();
+        for(int i = 0; i < experimentModel.size(); i++) {
+            HashMap<Integer, UserInputForBeadPlate> inputs = new HashMap<>();
+            for(int j = 0; j < experimentModel.get(i + 1).getNumPlates(); j++) {
+               inputs.put(j + 1, experimentModel.get(i + 1).getBeadPlate(j + 1).getPlateDetails());
+            }
+            userInputsForBeadPlateMap.put(i + 1, inputs);
+        }
+        return userInputsForBeadPlateMap;
     }
+    
+    public HashMap<Integer, UserInputForBeadPlate> getUserInputsForOneExperiment(int curExperiment) {
+        HashMap<Integer, UserInputForBeadPlate> userInputsForExperiment = new HashMap<>();
+        
+        for(int i = 1; i <= experimentModel.get(curExperiment).getNumPlates(); i++) {
+            userInputsForExperiment.put(i, experimentModel.get(curExperiment).getBeadPlate(i).getPlateDetails());
+        }
+        
+        return userInputsForExperiment;
+    }
+    
+    /*
+    * method for initializing the experiment model.
+    * should be called whenever the xml file map is 
+    * altered, this is because we need to set the number
+    * of experiments and plates in each experiment accordingly.
+    */
+    public void initializeProbeListForPopulate()
+    {
+        //if not empty clear it first. (for manually set up experiments) 
+        if(!experimentModel.isEmpty()) {
+           experimentModel.clear();
+        }
+        
+        if(XMLFileMap.isEmpty()) {
+            System.out.println("XML MAP IS EMPTY!!!!!!!!!!!!!!!!!!");
+        }
+       
+        // for each (key, value) pair
+        for(int i = 1; i <= numberOfExperiments; i++) {
+            Experiment tmpExp = new Experiment();          
+            for(int j = 0; j < XMLFileMap.get(i).size(); j++) {
+                BeadPlate plate = new BeadPlate();
+                tmpExp.addBeadPlate(j + 1, plate);
+            }
+            
+            experimentModel.put(i, tmpExp); //add experiment to hash map
+            
+            // need to put a bead plate for each 
+        }
+    }
+   
     public void setProbeListForPopulate(HashMap<Integer, HashMap<Integer, ObservableList<probeTableData>>> probeLists)
     {
-        this.probesListForPopulate = probeLists;
+        for(int i = 0; i < experimentModel.size(); i++) {
+            for(int j = 0; j < experimentModel.get(i).getNumPlates(); j++) {
+                try {
+                    experimentModel.get(i + 1).getBeadPlate(j + 1).setPlateTable(probeLists.get(i + 1).get(j + 1));
+                }
+                catch(IndexOutOfBoundsException e) {
+                   System.out.println("Input map doesn't match size of experiment model.");
+                }
+                finally {
+                   break; // iterate to next experiment
+                }
+            }
+        }
     }
     
-    public void setProbeListForOnePlate(int experiement, int beadPlate, ObservableList<probeTableData> probes)
+    public void setProbeListForOnePlate(int experiment, int beadPlate, ObservableList<probeTableData> probes)
     {
-        probesListForPopulate.get(experiement).put(beadPlate,probes);
+        experimentModel.get(experiment).getBeadPlate(beadPlate).setPlateTable(probes);
     }
     
     public HashMap<Integer, HashMap<Integer, ObservableList<probeTableData>>> getProbeListForPopulate()
     {
-        return probesListForPopulate;
-    }
-    
-    // this function is for test 
-    /*
-    public ObservableList<probeTableData> getProbesForOnePlate(int experiement, int beadPlate)
-    {
-        if(!probesListForPopulate.containsKey(experiement)) 
-        {
-            ErrorMsg error = new ErrorMsg();
-            error.showError("not contains the experiment " +  experiement + " information!");
-            return null;
+        HashMap<Integer, HashMap<Integer, ObservableList<probeTableData>>> probesListForPopulate = new HashMap<>();
+        for(int i = 0; i < experimentModel.size(); i++) {
+            HashMap<Integer, ObservableList<probeTableData>> probes = new HashMap<>();
+            for(int j = 0; j < experimentModel.get(i + 1).getNumPlates(); j++) {
+                probes.put(j + 1, experimentModel.get(i + 1).getBeadPlate(j + 1).getPlateTable());
+            }
+            probesListForPopulate.put(i + 1, probes);
         }
         
-        if(!probesListForPopulate.get(experiement).containsKey(beadPlate))
-        {
-            ErrorMsg error = new ErrorMsg();
-            error.showError("bead Plate " +  beadPlate + " dose not exisit!");
-            return null;
-        }    
-            return probesListForPopulate.get(experiement).get(beadPlate);
-
-    }
-    */
-    
-    //create probe container for each experiemnt
-    public void addExperiement(int experiements)
-    {
-        for(int i = 0; i < experiements; i++)
-        {
-            data.put(i, new HashMap<Integer, ObservableList<bead>>() );
-        }
+        return probesListForPopulate;
     }
 
     public void setCurrentExperiment(Integer experiement) {
@@ -307,42 +333,58 @@ public class ModelForExperiments {
          return currentExperiment;
     }
   
-    
     //initialize the probe list for the experiment
-    public void initializeProbeListMap(int experiment )
+    public void initializeProbeListMap(int experiment)
     {
-        if(!probesListForPopulate.containsKey(experiment))
+        //probesListForPopulate.put(experiment, new HashMap<Integer, ObservableList<probeTableData>>());
+        //List<String> s = XMLFileMap.get(experiment);
+        //int size = s.size();
+        for(int i = 1; i <= XMLFileMap.get(experiment).size();i++)
         {
-             probesListForPopulate.put(experiment, new HashMap<Integer, ObservableList<probeTableData>>());
-             List<String> s = XMLFileMap.get(experiment);
-             int size = s.size();
-             for(int i = 1; i <= XMLFileMap.get(experiment).size();i++)
-             {
-                 ObservableList<probeTableData> probes = FXCollections.observableArrayList();
-                 probesListForPopulate.get(experiment).put(i, probes);
-             }
+            ObservableList<probeTableData> probes = FXCollections.observableArrayList();
+            experimentModel.get(experiment).getBeadPlate(i).setPlateTable(probes);
         }
     }
     
     // add probe list to certain plate. 
     public void addOneProbeListForPopulate(int experiment, int plate, ObservableList<probeTableData> probes)
     {
-        probesListForPopulate.get(experiment).put(plate, probes);
+        //probesListForPopulate.get(experiment).put(plate, probes);    
+        experimentModel.get(experiment).getBeadPlate(plate).setPlateTable(probes);
     }
     
+    public void addOneUserInputForPopulate(int experiment, int plate, UserInputForBeadPlate input) {
+        experimentModel.get(experiment).getBeadPlate(plate).setPlateDetails(input);
+    }
+    
+    // seems to be redundant having this method, getProbeListForPopulate() does the exact same thing
     public  HashMap<Integer, HashMap<Integer, ObservableList<probeTableData>>> getProbeMapForPopulate()
     {
-        return probesListForPopulate;
+        return getProbeListForPopulate();
+        //return probesListForPopulate;
     }
     
-    // get probe list for cetain plate. 
+    // get probe list for certain plate. 
     public  ObservableList<probeTableData> getProbeListForPopulate(int experiment, int plate)
     {
-        if(!probesListForPopulate.containsKey(experiment)  || !probesListForPopulate.get(experiment).containsKey(plate)) return null;
-        return probesListForPopulate.get(experiment).get(plate);
+        //if(!probesListForPopulate.containsKey(experiment)  || !probesListForPopulate.get(experiment).containsKey(plate)) return null;
+        //return probesListForPopulate.get(experiment).get(plate);
+        if(!experimentModel.containsKey(experiment) || !experimentModel.get(experiment).getBeadPlates().containsKey(plate)) return null;
+        
+        return experimentModel.get(experiment).getBeadPlate(plate).getPlateTable();
     }
     
-
+    public boolean isModelComplete() {
+        for(int i = 1; i <= experimentModel.size(); i++) {
+            if(experimentModel.get(i).isExpComplete)
+                continue;
+            else {
+                return false; // all experiments are not complete
+            } 
+        }
+        return true;
+    }
+    
     // for all xmlfiles user uploaded
     public void setXMLFiles(List<String> list)
     {
@@ -356,11 +398,11 @@ public class ModelForExperiments {
     
     public void setNumberOfExperiments(int n)
     {
-        numberOfExpriments = n;
+        numberOfExperiments = n;
     }
     public int getNumberOfExperiments()
     {
-        return numberOfExpriments;
+        return numberOfExperiments;
     }
     
     public void setExperiments( ObservableList<Integer> experiments)
@@ -379,7 +421,7 @@ public class ModelForExperiments {
     }
     
     // replace xml file list for one experiment
-    public void seXMLfileListForOneExperiment(int experiment, List<String> list)
+    public void setXMLfileListForOneExperiment(int experiment, List<String> list)
     {
         XMLFileMap.put(experiment, list);
 
@@ -388,46 +430,44 @@ public class ModelForExperiments {
     {
         return XMLFileMap;
     }
- 
-
-
     
     public HashMap<Integer, List<List<List<HashMap<Integer,Double>>>>>    getMedianValueMatrix()
     {
-        return meidanValueMatrix;
+        return medianValueMatrix;
     }
     
-    public void setMedianValueMatrix(HashMap<Integer, List<List<List<HashMap<Integer,Double>>>>> meidanValueMatrix)
+    public void setMedianValueMatrix(HashMap<Integer, List<List<List<HashMap<Integer,Double>>>>> medianValueMatrix)
     {
-        this.meidanValueMatrix = meidanValueMatrix;
+        this.medianValueMatrix = medianValueMatrix;
     }   
 
     //experiment starts from 1, sampleIndex, PlateIndex, probeIndex start from 0
     public  void setOneProbeDataForMedianValue(int experimentPos, int plateIndex,  int sampleIndex,  HashMap<Integer,Double> meidanValueDataForOneProbe)
     {
         // when median value matrix is empty, initialize it. 
-        if(meidanValueMatrix.isEmpty() || !meidanValueMatrix.containsKey(experimentPos) ) 
+        if(medianValueMatrix.isEmpty() || !medianValueMatrix.containsKey(experimentPos) ) 
         {
             List<List<List<HashMap<Integer,Double>>>> experiment= new ArrayList<>();
-            meidanValueMatrix.put(experimentPos, experiment);
+            medianValueMatrix.put(experimentPos, experiment);
         }
-        if(meidanValueMatrix.get(experimentPos).isEmpty() || meidanValueMatrix.get(experimentPos).size() < (plateIndex+1))
+        if(medianValueMatrix.get(experimentPos).isEmpty() || medianValueMatrix.get(experimentPos).size() < (plateIndex+1))
         {
             List<List<HashMap<Integer,Double>>> plate = new ArrayList<>();
-            meidanValueMatrix.get(experimentPos).add(plate);
+            medianValueMatrix.get(experimentPos).add(plate);
         }
-        if(meidanValueMatrix.get(experimentPos).get(plateIndex).isEmpty() || meidanValueMatrix.get(experimentPos).get(plateIndex).size() < (sampleIndex+1))
+        if(medianValueMatrix.get(experimentPos).get(plateIndex).isEmpty() || medianValueMatrix.get(experimentPos).get(plateIndex).size() < (sampleIndex+1))
         {
             List<HashMap<Integer,Double>> sample = new ArrayList<>();
-            meidanValueMatrix.get(experimentPos).get(plateIndex).add(sample);
+            medianValueMatrix.get(experimentPos).get(plateIndex).add(sample);
         }
         //sample starts from 1. sampleIndex = sample -1;  //plate starts from 1. plateIndex = plate -1;
-        meidanValueMatrix.get(experimentPos).get(plateIndex).get(sampleIndex).add(meidanValueDataForOneProbe);
+        medianValueMatrix.get(experimentPos).get(plateIndex).get(sampleIndex).add(meidanValueDataForOneProbe);
     }   
     
     public HashMap<Integer,Double> getOneProbeDataForMedianValue(int experimentPos, int plateIndex,  int sampleIndex, int probeIndex)
     {
-        return meidanValueMatrix.get(experimentPos).get(plateIndex).get(sampleIndex).get(probeIndex);
+        //System.out.println("matrix size: " + medianValueMatrix.get(experimentPos).size());
+        return medianValueMatrix.get(experimentPos).get(plateIndex).get(sampleIndex).get(probeIndex);
     }
 
     
@@ -519,6 +559,8 @@ public class ModelForExperiments {
     {
         this.curSample = curSample;
     }
+    
+    
     public String[]  getSampleNames()
     {
         return sampleNames;
@@ -528,6 +570,7 @@ public class ModelForExperiments {
     {
         this.sampleNames = sampleNames;
     }
+    
     public int getLargestSampleCount()
     {
         return largestSampleCount;

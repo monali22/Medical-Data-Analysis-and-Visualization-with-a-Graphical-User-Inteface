@@ -5,15 +5,15 @@
  */
 package Controller;
 
-import java.net.URL;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+
+import java.net.URL;
 
 /**
  *
@@ -26,14 +26,16 @@ public class Main extends Application {
   } 
     @Override
     public void start(Stage stage) throws Exception {
-        
+
+
       /*  Parent root = FXMLLoader.load(getClass().getResource("/View/Homepage.fxml"));
         
         Scene scene = new Scene(root);
         
         stage.setScene(scene);
         stage.show(); */
-       
+
+
     URL menuBarUrl = getClass().getResource("/View/menuBar.fxml");
     MenuBar bar = FXMLLoader.load( menuBarUrl );         
                
@@ -44,10 +46,12 @@ public class Main extends Application {
     root.setCenter(paneOne);
         
     Scene scene = new Scene(root, 640, 480);
+    stage.setTitle("VIA-QMI");
+
+   // scene.getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); //this works
     stage.setScene(scene);
-    stage.show();
-    stage.setMaximized(true);
-    stage.show();
+ 
+    stage.show(); 
     }
 
     /**

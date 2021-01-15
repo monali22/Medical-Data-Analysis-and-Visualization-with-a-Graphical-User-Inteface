@@ -80,7 +80,7 @@ ObservableList<bead> beads = FXCollections.observableArrayList();
  }
 
 // read one xml file and get median value data of each bead well
-public HashMap<Integer, HashMap<Integer,  Double>> getMedianValueData(String fileName,int experimentPos, int plateIndex) {
+public HashMap<Integer, HashMap<Integer,  Double>> getMedianValueData(String fileName, int experimentPos, int plateIndex) {
    //List for 96 wells. 
    HashMap<Integer, HashMap<Integer,  Double>> wells = new HashMap<>();    
    List<HashMap<Integer, List<Integer>>> originalXMLDataForOnePlate = new ArrayList<>();   
@@ -101,7 +101,6 @@ public HashMap<Integer, HashMap<Integer,  Double>> getMedianValueData(String fil
     // start parsing data from the xml file
     XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
     try {
-        //System.out.println(fileName);
         XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(new FileInputStream(fileName));
         while(xmlEventReader.hasNext()){
             XMLEvent xmlEvent = xmlEventReader.nextEvent();                

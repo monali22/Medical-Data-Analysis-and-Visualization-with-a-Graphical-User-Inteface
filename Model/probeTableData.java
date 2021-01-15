@@ -34,5 +34,10 @@ public class probeTableData {
     {
         this.probeForPlate = new SimpleStringProperty(probe);
     }
+    
+    @Override
+    public String toString() {
+        return probeCount + ": " + probeForPlate;
+    }
 
 }
