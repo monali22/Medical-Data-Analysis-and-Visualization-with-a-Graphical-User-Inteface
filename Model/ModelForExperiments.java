@@ -98,7 +98,7 @@ public class ModelForExperiments {
             // pass the path to the file as a parameter
         String currentLocation = System.getProperty("user.dir").toString();
         System.out.println("currLoc: "+ currentLocation);
-        File file =new File( currentLocation +"\\probes1.txt"); //tODO: Change File location and name
+        File file =new File( currentLocation +"/probes1.txt"); //tODO: Change File location and name
         Scanner sc = new Scanner(file); 
         while (sc.hasNextLine())
         {
@@ -112,7 +112,7 @@ public class ModelForExperiments {
     {
             // pass the path to the file as a parameter
         String currentLocation = System.getProperty("user.dir").toString();
-        File file =new File( currentLocation +"\\probes2.txt"); //tODO: Change File location and name
+        File file =new File( currentLocation +"/probes2.txt"); //tODO: Change File location and name
         Scanner sc = new Scanner(file); 
         while (sc.hasNextLine())
         {

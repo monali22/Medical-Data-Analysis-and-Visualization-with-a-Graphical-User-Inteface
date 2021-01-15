@@ -72,9 +72,9 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-import static javax.swing.text.html.HTML.Tag.S;
-import static jdk.nashorn.internal.runtime.regexp.joni.constants.AsmConstants.S;
-import static jdk.nashorn.internal.runtime.regexp.joni.encoding.CharacterType.S;
+//import static javax.swing.text.html.HTML.Tag.S;
+//import static jdk.nashorn.internal.runtime.regexp.joni.constants.AsmConstants.S;
+//import static jdk.nashorn.internal.runtime.regexp.joni.encoding.CharacterType.S;
 
 /**
  *
