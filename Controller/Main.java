@@ -45,13 +45,9 @@ public class Main extends Application {
         
     Scene scene = new Scene(root, 640, 480);
     stage.setScene(scene);
-<<<<<<< HEAD
     stage.show();
-=======
     stage.setMaximized(true);
-    stage.show(); 
-
->>>>>>> projectBeginning
+    stage.show();
     }
 
     /**

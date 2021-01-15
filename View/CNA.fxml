@@ -37,81 +37,81 @@
                                                                 <Font name="System Bold" size="12.0" />
                                                             </font>
                                                         </JFXButton>
-                                                        <JFXButton id="btnss" fx:id="getInput" layoutX="6.0" layoutY="58.0" onAction="#SelctFile" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="Load your Inputs">
+<!--                                                        <JFXButton id="btnss" fx:id="getInput" layoutX="6.0" layoutY="58.0" onAction="#SelctFile" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="Load your Inputs">-->
+<!--                                                            <font>-->
+<!--                                                                <Font name="System Bold" size="12.0" />-->
+<!--                                                            </font>-->
+<!--                                                        </JFXButton>-->
+<!--                                                        <JFXButton id="btnss" fx:id="eliminateMFI" layoutX="6.0" layoutY="88.0" onAction="#EliminateMFI" prefHeight="25.0" prefWidth="230.0" stylesheets="@inputData.css" text="Eliminate MFI values less than 100 (noise)">-->
+<!--                                                            <font>-->
+<!--                                                                <Font name="System Bold" size="12.0" />-->
+<!--                                                            </font>-->
+<!--                                                        </JFXButton>-->
+                                                        <JFXButton id="btnss" fx:id="runCombat" layoutX="6.0" layoutY="58.0" onAction="#RunCombat" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="Run COMBAT">
                                                             <font>
                                                                 <Font name="System Bold" size="12.0" />
                                                             </font>
                                                         </JFXButton>
-                                                        <JFXButton id="btnss" fx:id="eliminateMFI" layoutX="6.0" layoutY="88.0" onAction="#EliminateMFI" prefHeight="25.0" prefWidth="230.0" stylesheets="@inputData.css" text="Eliminate MFI values less than 100 (noise)">
+                                                        <JFXButton id="btnss" fx:id="setUpComabatData" layoutX="6.0" layoutY="88.0" onAction="#SetUpCombatedData" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="Set up Combatted data">
                                                             <font>
                                                                 <Font name="System Bold" size="12.0" />
                                                             </font>
                                                         </JFXButton>
-                                                        <JFXButton id="btnss" fx:id="runCombat" layoutX="6.0" layoutY="118.0" onAction="#RunCombat" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="Run COMBAT">
+                                                        <JFXButton id="btnss" fx:id="pCAOnPostCombatData" layoutX="6.0" layoutY="118.0" onAction="#PCAOnPostCombatData" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="PCA on post-combat data">
                                                             <font>
                                                                 <Font name="System Bold" size="12.0" />
                                                             </font>
                                                         </JFXButton>
-                                                        <JFXButton id="btnss" fx:id="setUpComabatData" layoutX="6.0" layoutY="148.0" onAction="#SetUpCombatedData" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="Set up Combatted data">
+                                                        <JFXButton id="btnss" fx:id="runCNA" layoutX="6.0" layoutY="148.0" onAction="#RunCNA" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="Run CNA">
                                                             <font>
                                                                 <Font name="System Bold" size="12.0" />
                                                             </font>
                                                         </JFXButton>
-                                                        <JFXButton id="btnss" fx:id="pCAOnPostCombatData" layoutX="6.0" layoutY="178.0" onAction="#PCAOnPostCombatData" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="PCA on post-combat data">
-                                                            <font>
-                                                                <Font name="System Bold" size="12.0" />
-                                                            </font>
-                                                        </JFXButton>
-                                                        <JFXButton id="btnss" fx:id="runCNA" layoutX="6.0" layoutY="208.0" onAction="#RunCNA" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="Run CNA">
-                                                            <font>
-                                                                <Font name="System Bold" size="12.0" />
-                                                            </font>
-                                                        </JFXButton>
-                                                        <JFXButton id="btnss" fx:id="chooseASoftPower" layoutX="6.0" layoutY="238.0" onAction="#ChooseASoftPower" prefHeight="25.0" prefWidth="150.0" stylesheets="@inputData.css" text="Choose soft power">
+                                                        <JFXButton id="btnss" fx:id="chooseASoftPower" layoutX="6.0" layoutY="178.0" onAction="#ChooseASoftPower" prefHeight="25.0" prefWidth="150.0" stylesheets="@inputData.css" text="Choose soft power">
                                                             <font>
                                                                 <Font name="System Bold" size="12.0" />
                                                             </font>
 
                                                         </JFXButton>
-                                                        <TextField fx:id="numss" layoutX="170.0" layoutY="238.0" prefHeight="25.0" prefWidth="80.0" />
-                                                        <JFXButton id="btnss" fx:id="checkTOMPLOT" layoutX="6.0" layoutY="268.0" onAction="#CheckTOMPLOT" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="Check the TOM plot and make sure CNA did a good job">
+                                                        <TextField fx:id="numss" layoutX="170.0" layoutY="178.0" prefHeight="25.0" prefWidth="80.0" />
+                                                        <JFXButton id="btnss" fx:id="checkTOMPLOT" layoutX="6.0" layoutY="208.0" onAction="#CheckTOMPLOT" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="Check the TOM plot and make sure CNA did a good job">
                                                             <font>
                                                                 <Font name="System Bold" size="12.0" />
                                                             </font>
                                                         </JFXButton>
-                                                        <JFXButton id="btnss" fx:id="modeulTraitRelationships" layoutX="6.0" layoutY="298.0" onAction="#ModeulTraitRelationships" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="Generate modeul-trait relationships">
+                                                        <JFXButton id="btnss" fx:id="modeulTraitRelationships" layoutX="6.0" layoutY="238.0" onAction="#ModeulTraitRelationships" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="Generate modeul-trait relationships">
                                                             <font>
                                                                 <Font name="System Bold" size="12.0" />
                                                             </font>
                                                         </JFXButton>
-                                                        <JFXButton id="btnss" fx:id="defineVariablesForOutputFileAndHeatmaps" layoutX="6.0" layoutY="328.0" onAction="#DefineVariablesForOutputFileAndHeatmaps" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="Define variables for output file and heatmaps">
+<!--                                                        <JFXButton id="btnss" fx:id="defineVariablesForOutputFileAndHeatmaps" layoutX="6.0" layoutY="328.0" onAction="#DefineVariablesForOutputFileAndHeatmaps" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="Define variables for output file and heatmaps">-->
+<!--                                                            <font>-->
+<!--                                                                <Font name="System Bold" size="12.0" />-->
+<!--                                                            </font>-->
+<!--                                                        </JFXButton>-->
+<!--                                                        <JFXButton id="btnss" fx:id="nowRUnIt" layoutX="6.0" layoutY="358.0" onAction="#NowRunIt" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="nowRunIt">-->
+<!--                                                            <font>-->
+<!--                                                                <Font name="System Bold" size="12.0" />-->
+<!--                                                            </font>-->
+<!--                                                        </JFXButton>-->
+<!--                                                        <JFXButton id="btnss" fx:id="nameTheCNA" layoutX="6.0" layoutY="388.0" onAction="#NameTheCNA" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="name the output CNA file and save">-->
+<!--                                                            <font>-->
+<!--                                                                <Font name="System Bold" size="12.0" />-->
+<!--                                                            </font>-->
+<!--                                                        </JFXButton>-->
+                                                        <JFXButton id="btnss" fx:id="makeModuleHeatMaps" layoutX="6.0" layoutY="268.0" onAction="#MakeModuleHeatMaps" prefHeight="25.0" prefWidth="150.0" stylesheets="@inputData.css" text="Make module heatmaps">
                                                             <font>
                                                                 <Font name="System Bold" size="12.0" />
                                                             </font>
                                                         </JFXButton>
-                                                        <JFXButton id="btnss" fx:id="nowRUnIt" layoutX="6.0" layoutY="358.0" onAction="#NowRunIt" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="nowRunIt">
-                                                            <font>
-                                                                <Font name="System Bold" size="12.0" />
-                                                            </font>
-                                                        </JFXButton>
-                                                        <JFXButton id="btnss" fx:id="nameTheCNA" layoutX="6.0" layoutY="388.0" onAction="#NameTheCNA" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="name the output CNA file and save">
-                                                            <font>
-                                                                <Font name="System Bold" size="12.0" />
-                                                            </font>
-                                                        </JFXButton>
-                                                        <JFXButton id="btnss" fx:id="makeModuleHeatMaps" layoutX="6.0" layoutY="418.0" onAction="#MakeModuleHeatMaps" prefHeight="25.0" prefWidth="150.0" stylesheets="@inputData.css" text="Make module heatmaps">
-                                                            <font>
-                                                                <Font name="System Bold" size="12.0" />
-                                                            </font>
-                                                        </JFXButton>
-                                                        <TextField fx:id="colorChooser" layoutX="170.0" layoutY="418.0" prefHeight="25.0" prefWidth="80.0" />
+                                                        <TextField fx:id="colorChooser" layoutX="170.0" layoutY="268.0" prefHeight="25.0" prefWidth="80.0" />
 
-                                                        <JFXButton id="btnss" fx:id="runModuleHeatMaps" layoutX="6.0" layoutY="448.0" onAction="#RunModuleHeatMaps" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="Run module heatmaps">
+                                                        <JFXButton id="btnss" fx:id="runModuleHeatMaps" layoutX="6.0" layoutY="298.0" onAction="#RunModuleHeatMaps" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="Run module heatmaps">
                                                             <font>
                                                                 <Font name="System Bold" size="12.0" />
                                                             </font>
                                                         </JFXButton>
-                                                        <JFXButton id="btnss" fx:id="createANCandCNAHeatMap" layoutX="6.0" layoutY="478.0" onAction="#CreateANCandCNAHeatMap" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="Create ANCandCNA heatmaps">
+                                                        <JFXButton id="btnss" fx:id="createANCandCNAHeatMap" layoutX="6.0" layoutY="328.0" onAction="#CreateANCandCNAHeatMap" prefHeight="25.0" prefWidth="200.0" stylesheets="@inputData.css" text="Create ANCandCNA heatmaps">
                                                             <font>
                                                                 <Font name="System Bold" size="12.0" />
                                                             </font>

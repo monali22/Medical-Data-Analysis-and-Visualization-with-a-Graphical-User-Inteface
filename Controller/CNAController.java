@@ -88,33 +88,6 @@ public class CNAController {
     private CheckBox checkBox1, checkBox2, checkBox3, checkBox4, checkBox5, checkBox6, checkBox7, checkBox8, checkBox9, checkBox10, checkBox11, checkBox12, checkBox13, checkBox14, checkBox15, checkBox16;
 
 
-    @FXML
-    private void SelctFile(ActionEvent event) throws REngineException, REXPMismatchException {
-        System.out.println(jriEngine.getRni());
-        FileChooser fc = new FileChooser();
-        fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("CSV file", "*.csv"));
-        File file = fc.showOpenDialog(null);
-
-
-
-        String fileName = file.getName();
-        directory = file.getAbsolutePath().replace(fileName,"");
-        System.out.println(fileName);
-        System.out.println(directory);
-//        jriEngine.assign("directory",directory);
-//        jriEngine.assign("input.csv", fileName);
-//        rawInput = jriEngine.parseAndEval(fileName);
-
-        jriEngine.parseAndEval("setwd('/Users/kuldeep/Downloads/WGCNA')");
-        rawInput = jriEngine.parseAndEval("read.csv('input.csv')");
-        jriEngine.assign("rawData",rawInput);
-        jriEngine.parseAndEval("datExpr <- as.data.frame((rawData[,-c(1:3)]))");
-        jriEngine.parseAndEval("row.names(datExpr) <- rawData$combo");
-        jriEngine.parseAndEval("row.names(datExpr)");
-        jriEngine.parseAndEval("head(datExpr)");
-        filesList1.getItems().add("Loaded inputs");
-        checkBox2.setSelected(true);
-    }
 
     @FXML
     private void LoadPackages(ActionEvent event) throws REngineException, REXPMismatchException {
@@ -145,10 +118,39 @@ public class CNAController {
         filesList1.getItems().add("Loaded packages");
         checkBox1.setSelected(true);
 
-    }
+//    }
 
-    @FXML
-    public void EliminateMFI(ActionEvent event) throws REXPMismatchException, REngineException {
+//        @FXML
+//        private void SelctFile(ActionEvent event) throws REngineException, REXPMismatchException {
+            System.out.println(jriEngine.getRni());
+            FileChooser fc = new FileChooser();
+            fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("CSV file", "*.csv"));
+            File file = fc.showOpenDialog(null);
+
+
+
+            String fileName = file.getName();
+            directory = file.getAbsolutePath().replace(fileName,"");
+            System.out.println(fileName);
+            System.out.println(directory);
+//        jriEngine.assign("directory",directory);
+//        jriEngine.assign("input.csv", fileName);
+//        rawInput = jriEngine.parseAndEval(fileName);
+
+            jriEngine.parseAndEval("setwd('/Users/kuldeep/Downloads/WGCNA')");
+            rawInput = jriEngine.parseAndEval("read.csv('input.csv')");
+            jriEngine.assign("rawData",rawInput);
+            jriEngine.parseAndEval("datExpr <- as.data.frame((rawData[,-c(1:3)]))");
+            jriEngine.parseAndEval("row.names(datExpr) <- rawData$combo");
+            jriEngine.parseAndEval("row.names(datExpr)");
+            jriEngine.parseAndEval("head(datExpr)");
+            filesList1.getItems().add("Loaded inputs");
+            checkBox2.setSelected(true);
+//        }
+
+//
+//    @FXML
+//    public void EliminateMFI(ActionEvent event) throws REXPMismatchException, REngineException {
         jriEngine.parseAndEval("aves <- rowMeans(datExpr)");
         jriEngine.parseAndEval("datExpr['new.col'] <- aves");
         aves = jriEngine.get("aves", null, false);
@@ -467,6 +469,53 @@ public class CNAController {
 
     @FXML
     public void MakeModuleHeatMaps(ActionEvent event) throws REXPMismatchException, REngineException {
+
+        //DefineVariablesForOutputFileAndHeatmaps
+        jriEngine.parseAndEval("analTrait <- 'black' ");
+        jriEngine.parseAndEval("analCondition <- 'treatment'  ");
+        jriEngine.parseAndEval("weight <- as.data.frame(datTraits$treatment)  ");
+        jriEngine.parseAndEval("names(weight) = 'treatment'");
+        jriEngine.parseAndEval("aggregate(datExpr, list(datTraits$treatment), mean) -> means");
+        jriEngine.parseAndEval("meanNames <- c('NMDA', 'ACSF')       ");
+        filesList1.getItems().add("DefineVariablesForOutputFileAndHeatmaps done");
+        checkBox11.setSelected(true);
+
+        //NowRunIt
+        jriEngine.parseAndEval("module <- analTrait");
+        jriEngine.parseAndEval("rownames(means) <- meanNames");
+        jriEngine.parseAndEval("means <- means[,-c(1)]");
+        jriEngine.parseAndEval("foldChange <- means[1,]/means[2,]");
+        jriEngine.parseAndEval("means <- 2^means");
+        jriEngine.parseAndEval("rownames(foldChange) <- 'FoldChange'");
+        jriEngine.parseAndEval("modNames <- substring(names(MEs), 3)");
+        jriEngine.parseAndEval("geneModuleMembership <- as.data.frame(cor(datExpr, MEs, use = 'p'))");
+        jriEngine.parseAndEval("MMPvalue <- as.data.frame(corPvalueStudent(as.matrix(geneModuleMembership), nSamples))");
+        jriEngine.parseAndEval("names(geneModuleMembership) <- paste('MM', modNames, sep='')");
+        jriEngine.parseAndEval("names(MMPvalue) = paste('p.MM', modNames, sep='')");
+        jriEngine.parseAndEval("geneTraitSignificance <- as.data.frame(cor(datExpr, weight, use ='p'))");
+        jriEngine.parseAndEval("GSPvalue <- as.data.frame(corPvalueStudent(as.matrix(geneTraitSignificance), nSamples))");
+        jriEngine.parseAndEval("names(geneTraitSignificance) = paste('GS', names(weight), sep='')");
+        jriEngine.parseAndEval("names(GSPvalue) = paste('p.GS.', names(weight), sep='')");
+        jriEngine.parseAndEval("column <- match(module, modNames)");
+        jriEngine.parseAndEval("moduleGenes <- moduleColors==module");
+        jriEngine.parseAndEval("probes <- colnames(datExpr)");
+        jriEngine.parseAndEval("geneInfo0 <- data.frame(probes = probes, moduleColor = moduleColors, t(means), geneTraitSignificance, GSPvalue)");
+        jriEngine.parseAndEval("modOrder <- order(-abs(cor(MEs, weight, use = 'p')))");
+        jriEngine.parseAndEval(" num <- ncol(geneModuleMembership)");
+        jriEngine.parseAndEval("for (mod in 1:ncol(geneModuleMembership)) { oldNames <- names(geneInfo0);  geneInfo0 <- data.frame(geneInfo0, geneModuleMembership[, modOrder[mod]],MMPvalue[, modOrder[mod]]);  names(geneInfo0) <- c(oldNames, paste('MM.', modNames[modOrder[mod]], sep=''),paste('p.MM.', modNames[modOrder[mod]], sep=''))}");
+        jriEngine.parseAndEval("moi1 <- 'p.MM'");
+        jriEngine.parseAndEval("geneorderspacer <- paste(moi1,analTrait, sep='.')");
+        jriEngine.parseAndEval("geneOrder <- order(abs(geneInfo0[,geneorderspacer])) ");
+        jriEngine.parseAndEval("geneInfo <- geneInfo0[geneOrder, ]");
+        filesList1.getItems().add("NowRunIt done");
+        checkBox12.setSelected(true);
+
+        //NameTheCNA
+        jriEngine.parseAndEval("write.csv(geneInfo, file = 'CNA_outputs.csv')");
+        filesList1.getItems().add("NameTheCNA done");
+        checkBox13.setSelected(true);
+
+
         String clor = colorChooser.getText();
         jriEngine.assign("color", clor);
         jriEngine.parseAndEval("MOI <- color");
